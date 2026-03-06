@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QCM CCNA3 - Révisions ENSA</title>
+<style>
+:root {
+  --primary: #1a73e8;
+  --primary-dark: #1557b0;
+  --success: #0d9488;
+  --danger: #dc2626;
+  --bg: #0f172a;
+  --card: #1e293b;
+  --card-hover: #334155;
+  --text: #e2e8f0;
+  --text-muted: #94a3b8;
+  --border: #334155;
+  --correct-bg: rgba(13,148,136,0.15);
+  --correct-border: #0d9488;
+  --wrong-bg: rgba(220,38,38,0.15);
+  --wrong-border: #dc2626;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+header {
+  text-align: center;
+  padding: 40px 20px;
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  border-bottom: 2px solid var(--primary);
+}
+
+header h1 {
+  font-size: 2.2rem;
+  background: linear-gradient(135deg, #60a5fa, #a78bfa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 8px;
+}
+
+header p {
+  color: var(--text-muted);
+  font-size: 1.1rem;
+}
+
+.stats-bar {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-top: 15px;
+  flex-wrap: wrap;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-num {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #60a5fa;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Start screen */
+#start-screen {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+#start-screen h2 {
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+}
+
+#start-screen p {
+  color: var(--text-muted);
+  margin-bottom: 30px;
+  font-size: 1.1rem;
+}
+
+.btn {
+  display: inline-block;
+  padding: 14px 40px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+
+.btn:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(26,115,232,0.4);
+}
+
+.btn:active { transform: translateY(0); }
+
+.btn-success {
+  background: var(--success);
+}
+
+.btn-success:hover {
+  background: #0f766e;
+  box-shadow: 0 4px 15px rgba(13,148,136,0.4);
+}
+
+/* Progress bar */
+.progress-container {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.progress-bar-wrap {
+  background: var(--bg);
+  border-radius: 8px;
+  height: 10px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #60a5fa, #a78bfa);
+  border-radius: 8px;
+  transition: width 0.5s ease;
+  width: 0%;
+}
+
+/* Question card */
+.question-card {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 30px;
+  margin-bottom: 20px;
+  border: 1px solid var(--border);
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.question-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  background: rgba(96,165,250,0.2);
+  color: #60a5fa;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.question-badge.multiple {
+  background: rgba(167,139,250,0.2);
+  color: #a78bfa;
+}
+
+.question-text {
+  font-size: 1.15rem;
+  font-weight: 500;
+  margin-bottom: 20px;
+  line-height: 1.7;
+}
+
+.question-image {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.question-image img {
+  max-width: 100%;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.question-image img:hover {
+  transform: scale(1.02);
+}
+
+/* Options */
+.options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.option-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 14px 18px;
+  background: var(--bg);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  gap: 12px;
+}
+
+.option-item:hover:not(.disabled) {
+  border-color: var(--primary);
+  background: rgba(26,115,232,0.1);
+}
+
+.option-item.selected {
+  border-color: var(--primary);
+  background: rgba(26,115,232,0.15);
+}
+
+.option-item.correct {
+  border-color: var(--correct-border) !important;
+  background: var(--correct-bg) !important;
+}
+
+.option-item.wrong {
+  border-color: var(--wrong-border) !important;
+  background: var(--wrong-bg) !important;
+}
+
+.option-item.disabled {
+  cursor: default;
+  opacity: 0.85;
+}
+
+.option-item.disabled.missed-correct {
+  border-color: var(--correct-border) !important;
+  background: var(--correct-bg) !important;
+  opacity: 1;
+}
+
+.option-marker {
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  border-radius: 8px;
+  border: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 1px;
+  transition: all 0.2s;
+}
+
+.option-item.selected .option-marker {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: white;
+}
+
+.option-item.correct .option-marker {
+  border-color: var(--correct-border);
+  background: var(--correct-border);
+  color: white;
+}
+
+.option-item.wrong .option-marker {
+  border-color: var(--wrong-border);
+  background: var(--wrong-border);
+  color: white;
+}
+
+.option-item.missed-correct .option-marker {
+  border-color: var(--correct-border);
+  background: var(--correct-border);
+  color: white;
+}
+
+.option-text {
+  flex: 1;
+  font-size: 0.95rem;
+}
+
+/* Feedback */
+.feedback {
+  margin-top: 15px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  font-weight: 600;
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+
+.feedback.show { display: block; }
+
+.feedback.correct-feedback {
+  background: var(--correct-bg);
+  border: 1px solid var(--correct-border);
+  color: var(--correct-border);
+}
+
+.feedback.wrong-feedback {
+  background: var(--wrong-bg);
+  border: 1px solid var(--wrong-border);
+  color: var(--wrong-border);
+}
+
+/* Validate button */
+.validate-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.btn-validate {
+  padding: 10px 28px;
+  border-radius: 10px;
+  border: none;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-validate.validate {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-validate.validate:hover { background: var(--primary-dark); }
+
+.btn-validate.next {
+  background: var(--success);
+  color: white;
+  display: none;
+}
+
+.btn-validate.next:hover { background: #0f766e; }
+
+.btn-validate:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Results screen */
+#results-screen {
+  display: none;
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.results-card {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 40px;
+  margin-bottom: 30px;
+  border: 1px solid var(--border);
+}
+
+.score-circle {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  margin: 0 auto 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  font-weight: 800;
+  position: relative;
+}
+
+.score-circle::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  padding: 4px;
+  background: linear-gradient(135deg, #60a5fa, #a78bfa);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+.score-circle small {
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.score-message {
+  font-size: 1.3rem;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.score-detail {
+  color: var(--text-muted);
+  margin-bottom: 25px;
+}
+
+.results-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Lightbox */
+.lightbox {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.9);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  cursor: zoom-out;
+}
+
+.lightbox.active { display: flex; }
+
+.lightbox img {
+  max-width: 95%;
+  max-height: 95%;
+  border-radius: 8px;
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .container { padding: 10px; }
+  header h1 { font-size: 1.6rem; }
+  .question-card { padding: 18px; }
+  .option-item { padding: 10px 12px; }
+  .stats-bar { gap: 15px; }
+  .score-circle { width: 120px; height: 120px; font-size: 2.4rem; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🎓 QCM CCNA3 - ENSA</h1>
+  <p>Entraînement aux examens - Séries aléatoires de 7 questions</p>
+  <div class="stats-bar">
+    <div class="stat">
+      <div class="stat-num" id="total-questions">211</div>
+      <div class="stat-label">Questions</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" id="series-count">0</div>
+      <div class="stat-label">Séries jouées</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" id="avg-score">-</div>
+      <div class="stat-label">Score moyen</div>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <!-- Start Screen -->
+  <div id="start-screen">
+    <h2>🚀 Prêt à réviser ?</h2>
+    <p>Chaque série contient <strong>7 questions</strong> sélectionnées aléatoirement parmi 211 questions.<br>
+    Les bonnes réponses sont affichées après chaque question.</p>
+    <button class="btn btn-success" onclick="startQuiz()">Commencer une série</button>
+  </div>
+
+  <!-- Quiz Screen -->
+  <div id="quiz-screen" style="display:none;">
+    <div class="progress-container">
+      <div class="progress-header">
+        <span>Question <span id="q-current">1</span>/7</span>
+        <span>Score : <span id="current-score">0</span>/7</span>
+      </div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="progress-fill"></div>
+      </div>
+    </div>
+
+    <div id="question-area"></div>
+  </div>
+
+  <!-- Results Screen -->
+  <div id="results-screen">
+    <div class="results-card">
+      <div class="score-circle" id="score-circle">
+        <span id="final-score">0</span>
+        <small>/7</small>
+      </div>
+      <div class="score-message" id="score-message"></div>
+      <div class="score-detail" id="score-detail"></div>
+      <div class="results-buttons">
+        <button class="btn btn-success" onclick="startQuiz()">🔄 Nouvelle série</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <img id="lightbox-img" src="" alt="Zoom">
+</div>
+
+<script>
+const ALL_QUESTIONS = [{"id": "1", "question": "Un administrateur réseau a modifié un routeur compatible OSPF pour avoir un paramètre de minuterie Hello de 20 secondes. Quel est le nouveau paramètre d’intervalle Dead par défaut?", "options": ["40 secondes", "60 secondes", "80 secondes", "100 secondes"], "correct": [2], "image": null, "type": "single"}, {"id": "2", "question": "Quelle table OSPF est identique sur tous les routeurs convergents dans la même zone OSPF?", "options": ["neighbor", "contiguïté", "routage", "topologie"], "correct": [3], "image": null, "type": "single"}, {"id": "3", "question": "Quel groupe d’API est utilisé par le contrôleur SDN pour communiquer avec les diverses applications ?", "options": ["Les API dirigées vers l’ouest", "Les API descendantes", "Les API dirigées vers l’est", "Les API ascendantes"], "correct": [3], "image": null, "type": "single"}, {"id": "4", "question": "Quelle est la fonction principale d’un hyperviseur ?", "options": ["Il est utilisé pour créer et gérer plusieurs instances de machine virtuelle sur une machine hôte.", "C’est un dispositif qui filtre et vérifie les informations d’identification de sécurité.", "Il est utilisé par les FAI pour contrôler les ressources informatiques du cloud.", "Il s’agit d’un logiciel utilisé pour coordonner et préparer les données à des fins d’analyse.", "C’est un dispositif qui synchronise un groupe de capteurs."], "correct": [0], "image": null, "type": "single"}, {"id": "5", "question": "En quoi la virtualisation est-elle utile à la reprise après sinistre dans un data center ?", "options": ["Le provisionnement des serveurs est plus rapide.", "Tous les équipements n’ont pas être identiques.", "Moins d’énergie est consommée.", "Il y a toujours du courant."], "correct": [1], "image": null, "type": "single"}, {"id": "6", "question": "Associez les fonctions aux couches correspondantes. (Les options ne sont pas toutes utilisées.)", "options": ["couche d’accès : Fournir un accès réseau à l'utilisateur / Constituer la périphérie du réseau", "couche distribution : Implémenter une politique d'accès réseau / Définir les limites de routage de couche 3", "couche cœur de réseau : Fournir une connectivité haut débit du réseau fédérateur / Constituer un associateur de tous les blocs de campus"], "correct": [0, 1, 2], "image": "https://ccnareponses.com/wp-content/uploads/2021/12/2020-07-11_174231a.jpg", "type": "multiple"}, {"id": "7", "question": "Quel ensemble d’entrées de contrôle d’accès permettrait à tous les utilisateurs du réseau 192.168.10.0/24 d’accéder à un serveur Web situé à l’adresse 172.17.80.1, sans toutefois les autoriser à utiliser le protocole Telnet ?", "options": ["access-list 103 permit 192.168.10.0 0.0.0.255 host 172.17.80.1 / access-list 103 deny tcp 192.168.10.0 0.0.0.255 any eq telnet​​", "access-list 103 permit tcp 192.168.10.0 0.0.0.255 any eq 80 / access-list 103 deny tcp 192.168.10.0 0.0.0.255 any eq 23", "access-list 103 permit tcp 192.168.10.0 0.0.0.255 host 172.17.80.1 eq 80 / access-list 103 deny tcp 192.168.10.0 0.0.0.255 any eq 23", "access-list 103 deny tcp host 192.168.10.0 any eq 23 / access-list 103 permit tcp host 192.168.10.1 eq 80"], "correct": [2], "image": null, "type": "single"}, {"id": "8", "question": "Citez trois raisons d’utiliser des adresses IP privées et la NAT ? (Choisissez trois réponses.)", "options": ["Pour créer plusieurs adresses IP publiques", "Pour réduire l’utilisation du processeur sur les routeurs des clients", "Pour empêcher les périphériques extérieurs connectés à Internet d’accéder à l’adressage de réseau local", "Pour économiser les adresses IP publiques enregistrées", "Pour améliorer les performances du routeur connecté à Internet", "Pour autoriser l’extension de réseau local sans ajout d’adresses IP publiques supplémentaires"], "correct": [2, 3, 5], "image": null, "type": "multiple"}, {"id": "9", "question": "Quelle est la caractéristique d’un réseau OSPF à zone unique?", "options": ["Tous les routeurs ont la même table de routage.", "Tous les routeurs ont la même table de voisins.", "Tous les routeurs sont dans la zone fédérateur.", "Tous les routeurs partagent une base de données de transfert commune."], "correct": [2], "image": null, "type": "single"}, {"id": "10", "question": "Quel est le but de l’établissement d’un étalon réseau ?", "options": ["Il vérifie la configuration de la sécurité des périphériques réseau.", "Il gère les performances des périphériques réseau.", "Il crée un point de référence pour des évaluations futures du réseau.", "Il fournit une moyenne statistique pour les performances réseau."], "correct": [2], "image": null, "type": "single"}, {"id": "11", "question": "Quelle déclaration décrit un VPN?", "options": ["Les VPN utilisent des connexions physiques dédiées pour transférer des données entre des utilisateurs distants.", "Les VPN utilisent des connexions virtuelles pour créer un réseau privé via un réseau public.", "Les VPN utilisent des connexions logiques pour créer des réseaux publics via Internet.", "Les VPN utilisent un logiciel de virtualisation de source ouverte pour créer le tunnel via Internet."], "correct": [1], "image": null, "type": "single"}, {"id": "12", "question": "Reportez-vous à l’illustration. Un administrateur a d’abord configuré une liste ACL étendue... Quelles deux conclusions peut-on tirer de cette nouvelle configuration ?​ (Choisissez deux.)", "options": ["Les paquets TFTP seront autorisés.", "Les paquets Telnet seront autorisés.", "Les paquets ping seront autorisés.", "Tous les paquets TCP et UDP seront refusés.", "Les paquets SSH seront autorisés."], "correct": [2, 4], "image": "https://ccnareponses.com/wp-content/uploads/2021/12/iqw386473n1v31.png", "type": "multiple"}, {"id": "13", "question": "Quelle affirmation décrit une caractéristique des listes de contrôle d’accès IPv4 standard ?", "options": ["Elles peuvent être configurées de manière à filtrer le trafic en fonction des adresses IP source et des ports source.", "Elles filtrent le trafic en fonction des adresses IP source uniquement.", "Elles peuvent être créées avec un numéro, mais pas avec un nom.", "Elles sont configurées en mode de configuration d’interface."], "correct": [1], "image": null, "type": "single"}, {"id": "14", "question": "Qu’est-ce qu’un WAN ?", "options": ["Une infrastructure réseau conçue pour prendre en charge le stockage, la récupération et la réplication de données", "Une infrastructure réseau qui fournit un accès à d’autres réseaux dans un vaste périmètre", "Une infrastructure réseau qui s’étend sur un périmètre physique limité, comme une ville", "Une infrastructure réseau qui fournit un accès dans un petit périmètre"], "correct": [1], "image": null, "type": "single"}, {"id": "15", "question": "Reportez-vous à l’illustration. Quelle séquence de commandes doit être utilisée pour configurer le routeur A pour OSPF?", "options": ["router ospf 1 / network 192.168.10.0 area 0", "router ospf 1 / network 192.168.10.64 255.255.255.192 / network 192.168.10.192 255.255.255.252", "router ospf 1 / network 192.168.10.64 0.0.0.63 area 0 / network 192.168.10.192 0.0.0.3 area 0", "router ospf 1 / network 192.168.10.0"], "correct": [2], "image": "https://ccnareponses.com/wp-content/uploads/2022/05/i386046n1v2-1613220070.9736.gif", "type": "single"}, {"id": "16", "question": "Sur quels éléments du routeur l’administrateur réseau doit-il effectuer des modifications pour une récupération de mot de passe ? (Choisissez deux réponses.)", "options": ["Mémoire morte (ROM) système", "Fichier de configuration initiale", "Valeur du registre de configuration", "Fichier de l’image système", "Fichier système NVRAM"], "correct": [1, 2], "image": null, "type": "multiple"}, {"id": "17", "question": "Quel type de réseau utilise une infrastructure commune pour transporter le trafic voix, de données et vidéo ?", "options": ["Convergé", "Sans frontières", "Administré", "Commuté"], "correct": [0], "image": null, "type": "single"}, {"id": "18", "question": "Reportez-vous à l’illustration. Si aucun ID de routeur n’a été configuré manuellement, que le routeur R1 utiliserait-il comme ID de routeur OSPF?", "options": ["209.165.201.1", "10.0.0.1", "10.1.0.1", "192.168.1.100"], "correct": [3], "image": "https://ccnareponses.com/wp-content/uploads/2022/05/2020-06-28_210428.jpg", "type": "single"}, {"id": "19", "question": "Quel type de paquet OSPF est utilisé par un routeur pour découvrir les routeurs voisins et établir la contiguïté voisine?", "options": ["Description de base de données (DD)", "hello", "Les mises à jour d’état de lien", "LSR (Link-State Request)"], "correct": [1], "image": null, "type": "single"}, {"id": "20", "question": "Quels sont trois avantages du cloud computing ? Citez-en trois.", "options": ["Il utilise des logiciels open source pour le traitement distribué des grands ensembles de données.", "Il transforme les données brutes en informations utiles en identifiant les tendances et les relations.", "Il utilise des clients répartis chez les utilisateurs finaux pour réaliser une portion substantielle du prétraitement et du stockage.", "Il élimine ou réduit le besoin d’équipements IT, de maintenance et de gestion sur site.", "Il permet d’accéder aux données de l’entreprise partout, à tout moment.", "Il rationalise les opérations IT d’une entreprise en s’abonnant uniquement aux services nécessaires."], "correct": [3, 4, 5], "image": null, "type": "multiple"}, {"id": "21", "question": "Parmi les scénarios suivants, lesquels sont des exemples de VPN d’accès à distance ? (Choisissez deux réponses.)", "options": ["Une petite filiale de trois salariés utilise un dispositif Cisco ASA pour créer une connexion VPN au siège social.", "Un agent commercial itinérant se connecte au réseau de l’entreprise via la connexion Internet d’un hôtel.", "Tous les utilisateurs d’une filiale importante ont accès aux ressources de l’entreprise via une seule connexion VPN.", "Un fabricant de jouets a une connexion VPN permanente avec l’un de ses fournisseurs de pièces.", "Un employé travaillant chez lui utilise un logiciel client VPN sur un ordinateur portable pour se connecter au réseau de l’entreprise."], "correct": [1, 4], "image": null, "type": "multiple"}, {"id": "22", "question": "Quelles affirmations caractérisent un virus ? Citez-en deux.", "options": ["Un virus se reproduit en exploitant indépendamment des vulnérabilités dans les réseaux.", "Un virus peut être en sommeil, puis s’activer à une date ou une heure spécifique.", "Un virus fournit au hacker des données sensibles, comme des mots de passe.", "Un virus comprend une vulnérabilité habilitante, un mécanisme de propagation et une charge utile.", "Un virus nécessite généralement une intervention de l’utilisateur final."], "correct": [1, 4], "image": null, "type": "multiple"}, {"id": "23", "question": "Pourquoi la QoS est-elle un élément important dans un réseau convergé qui combine communications vocales, vidéo et de données ?", "options": ["Les communications de données sont sensibles à la gigue.", "Les communications vocales et vidéo sont plus sensibles à la latence.", "Les communications de données doivent être la première priorité.", "Les appareils anciens ne peuvent pas transmettre de la voix et de la vidéo sans QoS."], "correct": [1], "image": null, "type": "single"}, {"id": "24", "question": "Faites correspondre le terme avec le lien web du composant http://www.buycarsfromus.com/2020models/ford/suv.html#Escape . (les options ne doivent pas être toutes utilisées.)", "options": ["protocol -> http", "fragment -> #Escape", "Uniform Resource Name (URN) -> www.buycarsfromus.com/2020models/ford/suv.html", "Uniform Resource Locator (URL) -> http://www.buycarsfromus.com/2020models/ford/suv.html", "Uniform Resource Identifier (URI) -> http://www.buycarsfromus.com/2020models/ford/suv.html#Escape"], "correct": [0, 1, 2, 3, 4], "image": "https://ccnareponses.com/wp-content/uploads/2021/12/2024-10-17_100331.jpg", "type": "multiple"}, {"id": "25", "question": "À quelle étape du recueil des symptômes l’ingénieur réseau détermine-t-il si le problème se situe sur la couche cœur de réseau, la couche de distribution ou la couche d’accès du réseau ?", "options": ["Détermination de la propriété.", "Identification des symptômes.", "Collecte d’informations.", "Réduction de l’étendue des causes probables.", "Documentation des symptômes."], "correct": [3], "image": null, "type": "single"}, {"id": "26", "question": "Reportez-vous à l’illustration. Quelles deux configurations seraient utilisées pour créer et appliquer une liste d’accès standard sur R1... ? Citez-en deux.", "options": ["R1 (config) # access-list 5 permit 10.0.70.0 0.0.127", "R1(config)# access-list 5 permit 10.0.54.0 0.0.1.255", "R1(config)# interface GigabitEthernet0/0 / R1(config-if)# ip access-group 5 out", "R1(config)# interface Serial0/0/0 / R1(config-if)# ip access-group 5 in", "R1(config)# access-list 5 permit any"], "correct": [0], "image": "https://ccnareponses.com/wp-content/uploads/2022/05/ccna-5.0-s2-43.jpg", "type": "single"}, {"id": "27", "question": "Quelle méthode permettrait à l’administrateur réseau de modifier la liste de contrôle d’accès et d’inclure des transferts FTP à partir de n’importe quelle adresse IP source ?", "options": ["R1(config)# access-list 105 permit udp host 10.0.70.23 host 10.0.54.5 range 1024 5000 / R1(config)# access-list 105 permit tcp any host 10.0.54.5 eq 20 / R1(config)# access-list 105 permit tcp any host 10.0.54.5 eq 21 / R1(config)# access-list 105 deny ip any any", "R1(config)# interface gi0/0 / R1(config-if)# no ip access-group 105 out ...", "R1(config)# access-list 105 permit tcp any host 10.0.54.5 eq 20 / R1(config)# access-list 105 permit tcp any host 10.0.54.5 eq 21", "R1(config)# interface gi0/0 / R1(config-if)# no ip access-group 105 out ..."], "correct": [0], "image": null, "type": "single"}, {"id": "28", "question": "ABCTech étudie l’utilisation de l’automatisation... Quel service ou quelle technologie permettrait de répondre à cette exigence ?", "options": ["ACI Cisco", "data center", "SDN (Software Defined Networking)", "virtualisation"], "correct": [3], "image": null, "type": "single"}, {"id": "29", "question": "Quel type de VPN utilise une configuration hub-and-spoke pour établir une topologie de maillage complet ?", "options": ["VPN MPLS", "GRE sur IPsec", "Interface de tunnel virtuel IPSec", "VPN multipoint dynamique"], "correct": [3], "image": null, "type": "single"}, {"id": "30", "question": "Quelle fonctionnalité permet de limiter la taille d’un domaine défaillant sur un réseau d’entreprise ?", "options": ["L’achat d’équipement d’entreprise conçu pour un volume de trafic important", "L’utilisation de la méthode du bloc de commutation du bâtiment", "L’utilisation d’une conception réseau principale regroupée", "L’installation d’alimentations redondantes"], "correct": [1], "image": null, "type": "single"}, {"id": "31", "question": "Quelle commande serait utilisée dans le cadre de la configuration NAT ou PAT pour afficher des informations sur les paramètres de configuration NAT et le nombre d’adresses dans le pool?", "options": ["show version", "show ip cache", "show ip nat statistics", "show running-config"], "correct": [2], "image": null, "type": "single"}, {"id": "32", "question": "Reportez-vous à l’exposition. Quel format de données est utilisé pour représenter les données pour les applications d’automatisation de réseau?", "options": ["HTML", "YAML", "JSON", "XML"], "correct": [3], "image": "https://ccnareponses.com/wp-content/uploads/2022/05/i349060v2n1_347060.png", "type": "single"}, {"id": "33", "question": "Quelle est la caractéristique de l’API REST ?", "options": ["évolué vers ce qui est devenu SOAP", "l’API la plus utilisée pour les services web", "utilisé pour échanger des informations structurées XML sur HTTP ou SMTP", "considérés comme lents, complexes et rigides"], "correct": [1], "image": null, "type": "single"}, {"id": "34", "question": "Dans JSON, qu’est-ce qui se tient entre crochets []?", "options": ["an array", "paires clé/valeur", "valeurs imbriquées", "un objet"], "correct": [0], "image": null, "type": "single"}, {"id": "35", "question": "Reportez-vous à l’illustration. La société a fourni des téléphones IP... Quel est le meilleur type et placement ACL à utiliser dans cette situation?", "options": ["ACL entrante étendue sur R3 G0/0", "ACL entrante standard sur les lignes R1 vty", "ACL entrante étendue sur R3 G0/0", "ACL entrante standard sur R1 G0/1"], "correct": [0], "image": "https://ccnareponses.com/wp-content/uploads/2022/05/i350679v1n1_C3M4-Diagram.jpg", "type": "single"}, {"id": "36", "question": "Un administrateur configure OSPF à zone unique sur un routeur. L’un des réseaux qui doivent être annoncés est 172.20.0.0 255.255.252.0. Quel masque générique l’administrateur utiliserait-il dans l’instruction réseau OSPF?", "options": ["0.0.0.3", "0.0.63.255", "0.0.3.255", "0.0.0.7"], "correct": [2], "image": null, "type": "single"}, {"id": "37", "question": "Deux grandes entreprises viennent de fusionner. L’ingénieur réseau a pour mission de connecter les réseaux... Quelle solution serait la plus économique pour fournir une connexion propre et sécurisée ?", "options": ["Frame Relay", "Client Cisco AnyConnect Secure Mobility avec SSL", "VPN à accès distant utilisant IPsec", "Réseau privé virtuel site à site", "VPN SSL sans client Cisco Secure Mobility"], "correct": [3], "image": null, "type": "single"}, {"id": "38", "question": "Quelle affirmation décrit précisément une caractéristique de IPsec?", "options": ["IPSec est un cadre de normes développé par Cisco qui s’appuie sur des algorithmes OSI.", "IPsec fonctionne sur la couche de l’application et protège toutes les données de l’application.", "IPSec fonctionne au niveau de la couche de transport et protège les données au niveau de la couche réseau.", "IPSec est un cadre de normes ouvertes qui repose sur des algorithmes existants.", "IPSec est un cadre de normes propriétaires qui dépendent d’algorithmes spécifiques à Cisco."], "correct": [3], "image": null, "type": "single"}, {"id": "39", "question": "Quelle technologie d’accès de WAN public repose sur l’utilisation de lignes téléphoniques en cuivre... ?", "options": ["DSL", "câble", "RNIS", "liaison commutée"], "correct": [0], "image": null, "type": "single"}, {"id": "40", "question": "Mettez en correspondance chaque composant d’une connexion WAN et sa description.", "options": ["DCE -> périphériques plaçant des données sur la boucle locale", "CPE -> appareils et câblage interne qui se trouvent à la périphérie du réseau de l’entreprise...", "point de démarcation -> point établi dans un bâtiment ou un complexe pour séparer l’équipement..."], "correct": [0, 1, 2], "image": "https://ccnareponses.com/wp-content/uploads/2022/05/Match-each-component-of-a-WAN-connection-to-its-description.jpg", "type": "multiple"}, {"id": "41", "question": "Reportez-vous à l’illustration. Un administrateur réseau a configuré OSPFv2 sur les deux routeurs Cisco, mais PC1 ne parvient pas à se connecter à PC2. Quelle est la cause la plus probable de ce problème ?", "options": ["L’interface Fa0/0 est configurée en tant qu’interface passive sur le routeur R2.", "L’interface S0/0 est configurée en tant qu’interface passive sur le routeur R2.", "L’interface Fa0/0 n’a pas été activée pour OSPFv2 sur le routeur R2.", "L’interface s0/0 n’a pas été activée pour OSPFv2 sur le routeur R2."], "correct": [2], "image": "https://ccnareponses.com/wp-content/uploads/2022/05/i285134v1n1_285134.png", "type": "single"}, {"id": "42", "question": "Reportez-vous à l’illustration. Un concepteur web appelle pour signaler que le serveur web https://www.google.com/search?q=web-s1.cisco.com n’est pas joignable... Quelles sont les deux choses qui peuvent être déterminées concernant le problème ?", "options": ["Le logiciel de serveur Web sur https://www.google.com/search?q=web-s1.cisco.com présente un problème.", "Un routeur est en panne entre l’hôte source et le serveur https://www.google.com/search?q=web-s1.cisco.com.", "DNS ne peut pas résoudre l’adresse IP pour le serveur https://www.google.com/search?q=web-s1.cisco.com.", "La passerelle par défaut entre l’hôte d’origine et le serveur 192.168.0.10 est en panne.", "Le serveur Web sur 192.168.0.10 est joignable depuis l’hôte d’origine."], "correct": [2, 4], "image": "https://ccnareponses.com/wp-content/uploads/2022/05/i286191v1n1_15178.jpg", "type": "multiple"}, {"id": "43", "question": "Quel type de trafic est décrit comme prévisible et fluide?", "options": ["Données", "Voix", "Vidéo"], "correct": [1], "image": null, "type": "single"}, {"id": "44", "question": "Lors de l’échange de messages sensibles... une valeur de hachage ne doit être recalculée qu’avec un code prédéfini. Sur quel aspect des communications sécurisées cette mesure de sécurité porte-t-elle ?", "options": ["L’intégrité des données", "La confidentialité des données", "système de non-répudiation", "authentification de l’origine"], "correct": [3], "image": null, "type": "single"}, {"id": "45", "question": "Quel type de malware est utilisé pour contrôler ces ordinateurs (ordinateurs lents regroupés) ?", "options": ["logiciel espion", "réseau de zombies", "rootkit", "virus"], "correct": [1], "image": null, "type": "single"}, {"id": "46", "question": "Une ACL est appliquée en entrée sur une interface de routeur... Si un paquet avec une adresse source 192.168.101.45, une adresse de destination 64.100.40.4 et un protocole 23 est reçu sur l’interface, le paquet est-il autorisé ou refusé?", "options": ["refusé", "Autorisé"], "correct": [0], "image": null, "type": "single"}, {"id": "47", "question": "Quels sont les deux bénéfices de l’utilisation des déroutements SNMP ? (Choisissez deux propositions.)", "options": ["Ils réduisent la charge sur les ressources du réseau et des agents.", "Ils peuvent passivement écouter les datagrammes NetFlow exportés.", "Ils limitent l’accès aux systèmes de gestion uniquement.", "Ils peuvent fournir des données sur les paquets TCP/IP qui transitent par les appareils Cisco.", "Ils permettent d’éliminer le besoin d’interrogations périodiques."], "correct": [0, 4], "image": null, "type": "multiple"}, {"id": "48", "question": "Reportez-vous à l’illustration... Quelles informations concernant R2 peuvent être tirées du résultat partiel de la commande show ntp associations detail présenté ? (Choisissez deux réponses.)", "options": ["L’adresse IP de R2 est 192.168.1.2.", "Les deux routeurs sont configurés pour utiliser NTPv2.", "Le routeur R2 est le maître et R1 est le client.", "L’adresse IP de R1 est 192.168.1.2.", "Le routeur R1 est le maître et R2 est le client."], "correct": [3, 4], "image": "https://ccnareponses.com/wp-content/uploads/2022/05/Q48-CCNA-3-Examen-Final-ENSAv7.jpg", "type": "multiple"}, {"id": "49", "question": "Quelle étape du processus de routage d’état de liens est décrite par un routeur inondant l’état de liens et les informations de coût sur chaque liaison directement connectée?", "options": ["déclarer un voisin inaccessible", "échange d’annonces à état de liens", "création de la table de topologie", "sélection de l’ID du routeur"], "correct": [1], "image": null, "type": "single"}, {"id": "50", "question": "Si un routeur a deux interfaces et achemine à la fois le trafic IPv4 et IPv6, combien de liste ACL pourrait-on créer et appliquer?", "options": ["4", "6", "8", "12", "16"], "correct": [2], "image": null, "type": "single"}, {"id": "51", "question": "Reportez-vous à l’illustration... Lorsque vous appliquerez les meilleures pratiques, à quel endroit la liste ACL standard devrait-elle être appliquée?", "options": ["R2 G0/0 sortant", "R1 S0/0/0 entrant", "R1 S0/0/0 sortant", "R2 S0/0/1 sortant", "R2 G0/1 entrant"], "correct": [0], "image": "https://ccnareponses.com/wp-content/uploads/2022/05/i282155v1n2_282152.png", "type": "single"}, {"id": "52", "question": "Quel protocole est un protocole de couche 2 neutre par le fournisseur qui annonce l’identité et les capacités du périphérique hôte à d’autres périphériques réseau connectés?", "options": ["Protocole NTP", "SNMP", "TFTP", "LLDP"], "correct": [3], "image": null, "type": "single"}, {"id": "53", "question": "Quel type de marquage QoS est appliqué aux trames Ethernet ?", "options": ["DSCP", "CoS", "Priorité IP", "ToS"], "correct": [1], "image": null, "type": "single"}, {"id": "54", "question": "Quelle fonctionnalité doit-il activer sur le routeur de l’entreprise pour permettre aux appareils de bureau d’accéder à Internet ?", "options": ["UPnP", "Filtrage MAC", "NAT", "QoS"], "correct": [2], "image": null, "type": "single"}, {"id": "55", "question": "Examinez l’illustration. Le routeur R1 est configuré avec la NAT statique... Quelle est la cause probable de cette absence de connectivité ?", "options": ["L’adresse globale interne est incorrecte.", "La configuration NAT du routeur présente une adresse locale interne incorrecte.", "L’interface Fa0/0 devrait être configurée avec la commande ip nat outside .", "La configuration NAT de l’interface S0/0/1 est incorrecte."], "correct": [1], "image": "https://ccnareponses.com/wp-content/uploads/2022/05/i212256v1n3_212256.png", "type": "single"}, {"id": "56", "question": "Examinez l’illustration. Un technicien configure R2 de sorte que la NAT statique... Quelle est la cause probable de l’impossibilité pour le PC client d’accéder au serveur Web ?", "options": ["L’interface Fa0/1 devrait être identifiée en tant qu’interface NAT externe.", "L’interface S0/0/0 devrait être identifiée en tant qu’interface NAT externe.", "La configuration ne dispose pas d’une liste de contrôle d’accès valide.", "L’instruction IP NAT est incorrecte."], "correct": [1], "image": "https://ccnareponses.com/wp-content/uploads/2022/05/2017-06-26_224429.jpg", "type": "single"}, {"id": "57", "question": "Pourquoi l’équipe utiliserait-elle des fuzzers?", "options": ["pour inverser l’ingénierie des fichiers binaires...", "pour détecter les outils installés dans les fichiers et répertoires...", "pour détecter toute preuve d’un piratage ou d’un programme malveillant...", "pour découvrir les vulnérabilités de sécurité d’un ordinateur"], "correct": [3], "image": null, "type": "single"}, {"id": "58", "question": "Reportez-vous à l’illustration. Quelle méthode permet d’activer un routeur OSPF afin d’annoncer une route par défaut aux routeurs OSPF voisins ?", "options": ["Utilisez la commande default-information originate sur R0-A.", "Utilisez la commande redistribute static sur le routeur ISP.", "Utilisez la commande default-information originate sur le routeur ISP.", "Utilisez une route statique renvoyant vers le routeur ISP et redistribuez- la.", "Utilisez la commande redistribute static sur R0-A."], "correct": [0], "image": "https://ccnareponses.com/wp-content/uploads/2022/05/p53-1-1.png", "type": "single"}, {"id": "59", "question": "Reportez-vous à l’illustration. Quel est le coût de l’OSPF pour atteindre le réseau LAN Ouest 172.16.2.0/24 depuis l’Est?", "options": ["782", "74", "65", "128"], "correct": [2], "image": "https://ccnareponses.com/wp-content/uploads/2022/05/49.png", "type": "single"}, {"id": "60", "question": "Reportez-vous à l’illustration. Quelles trois conclusions peut-on tirer de la sortie affichée? (Choisissez trois réponses.)", "options": ["Le BDR a trois voisins.", "L’ID du routeur sur le routeur DR est 3.3.3.3", "Il y a eu 9 secondes depuis le dernier paquet hello envoyé.", "Le DR peut être atteint via l’interface GigabitEthernet 0/0.", "Les valeurs d’ID du routeur n’étaient pas les critères utilisés pour sélectionner le DR et le BDR.", "Cette interface utilise la priorité par défaut."], "correct": [2, 3, 4], "image": "https://ccnareponses.com/wp-content/uploads/2022/05/i212860v1n1_212860-1.png", "type": "multiple"}, {"id": "61", "question": "Quel type de VPN implique un protocole de tunnel non sécurisé encapsulé par IPSec?", "options": ["VPN SSL", "GRE sur IPsec", "Interface de tunnel virtuel IPSec", "VPN multipoint dynamique"], "correct": [1], "image": null, "type": "single"}, {"id": "62", "question": "Reportez-vous à l’illustration. Un administrateur réseau souhaite ajouter une entrée ACE... Quelle entrée ACE répond à cette exigence ?", "options": ["30 deny 172.23.16.0 0.0.15.255", "5 deny 172.23.16.0 0.0.255.255", "15 deny 172.23.16.0 0.0.15.255", "5 deny 172.23.16.0 0.0.15.255"], "correct": [3], "image": "https://ccnareponses.com/wp-content/uploads/2022/05/Q62-CCNA-3-Examen-Final-ENSAv7.jpg", "type": "single"}, {"id": "63", "question": "Un administrateur réseau établit une liste de contrôle d’accès standard qui interdira tout trafic venant du réseau 172.16.0.0/16 mais autorisera tous les autres trafics. Quelles sont les deux commandes à utiliser ? (Choisissez deux réponses.)", "options": ["Router(config)# access-list 95 172.16.0.0 255.255.255.255", "Router(config)# access-list 95 host 172.16.0.0", "Router(config)# access-list 95 deny any", "Router(config)# access-list 95 deny 172.16.0.0 255.255.0.0", "Router(config)# access-list 95 permit any", "Router(config)# access-list 95 deny 172.16.0.0 0.0.255.255"], "correct": [4, 5], "image": null, "type": "multiple"}, {"id": "64", "question": "Pour le dépannage, quelle approche un administrateur réseau chevronné privilégiera-t-il contrairement à un administrateur réseau moins expérimenté ?", "options": ["une approche moins structurée reposant sur des déductions que permettent l’expérience", "une approche structurée qui débute avec l’examen de la couche physique avec progression ascendante...", "une approche qui débute avec l’examen des applications des utilisateurs avec progression descendante...", "la comparaison des composants qui fonctionnent et ceux qui ne fonctionnent pas..."], "correct": [0], "image": null, "type": "single"}, {"id": "65", "question": "Reportez-vous à l’illustration. Quel est le meilleur type et placement ACL à utiliser dans cette situation (IP 192.168.11.10)?", "options": ["ACL entrante standard sur les lignes R1 vty", "ACL étendues entrantes sur R1 G0/0 et G0/1", "ACL entrante standard sur l’interface WAN R2 se connectant à l’internet", "ACL sortante étendue sur R2 S0/0/1"], "correct": [0], "image": "https://ccnareponses.com/wp-content/uploads/2022/05/i350680v1n1_C3M4-Diagram.jpg", "type": "single"}, {"id": "66", "question": "Reportez-vous à l’illustration. Que faut-il faire pour résoudre le problème sur le routeur R2 ?", "options": ["Mettez en œuvre la commande network 192.168.3.1 0.0.0.0 area 0 sur le router R2.", "Remplacez l’ID du routeur R2 par 2.2.2.2.", "Mettez en œuvre la commande no passive-interface Serial0/1.", "Mettez en œuvre la commande network 192.168.2.6 0.0.0.0 area 0 sur le routeur R2."], "correct": [2], "image": "https://ccnareponses.com/wp-content/uploads/2021/12/a2221i386513n1v3.png", "type": "single"}, {"id": "67", "question": "Deux routeurs compatibles OSPF sont connectés via une liaison point à point. Pendant l’état ExStart, quel routeur sera choisi comme premier à envoyer des paquets DBD?", "options": ["le routeur avec l’ID de routeur le plus bas", "le routeur avec l’adresse IP la plus basse sur l’interface de connexion", "le routeur avec l’adresse IP la plus élevée sur l’interface de connexion", "le routeur avec l’ID de routeur le plus élevé"], "correct": [3], "image": null, "type": "single"}, {"id": "68", "question": "Quelles sont les deux règles de syntaxe utiliser pour écrire un tableau JSON? (Choisissez deux réponses.)", "options": ["Un espace doit séparer chaque valeur du tableau.", "Les valeurs sont placées entre crochets.", "Le tableau ne peut inclure qu’un seul type de valeur.", "Un point-virgule sépare la clé et la liste des valeurs.", "Chaque valeur du tableau est séparée par une virgule."], "correct": [1, 4], "image": null, "type": "multiple"}, {"id": "69", "question": "Quel type d’API serait utilisé pour permettre aux vendeurs autorisés d’une organisation d’accéder aux données de vente internes à partir de leurs appareils mobiles?", "options": ["ouvrir", "public", "partenaire", "privé"], "correct": [3], "image": null, "type": "single"}, {"id": "70", "question": "Quels sont les deux types de connexions VPN ? (Choisissez deux propositions.)", "options": ["PPPoE", "L’accès distant", "Ligne louée", "Site à site", "Frame Relay"], "correct": [1, 3], "image": null, "type": "multiple"}, {"id": "71", "question": "Quels énoncés décrivent l’utilisation d’algorithmes asymétriques ? Citez-en deux.", "options": ["Les clés publiques et privées peuvent être utilisées de manière interchangeable.", "Si une clé privée est utilisée pour chiffrer les données, une clé du même type doit également être utilisée pour les déchiffrer.", "Si une clé publique est utilisée pour chiffrer les données, une clé privée doit être utilisée pour les déchiffrer.", "Si une clé privée est utilisée pour chiffrer les données, une clé publique doit être utilisée pour les déchiffrer.", "Si une clé publique est utilisée pour chiffrer les données, une clé du même type doit également être utilisée pour les déchiffrer."], "correct": [2, 3], "image": null, "type": "multiple"}, {"id": "72", "question": "Pouvez-vous citer une caractéristique d’un cheval de Troie sur le plan de la sécurité du réseau ?", "options": ["D’énormes quantités de données sont envoyées à une interface de périphérique réseau en particulier.", "Trop d’informations sont adressées à un bloc mémoire en particulier...", "Un dictionnaire électronique est utilisé pour obtenir un mot de passe...", "Un programme malveillant est dissimulé dans un programme exécutable d’apparence légitime."], "correct": [3], "image": null, "type": "single"}, {"id": "73", "question": "Si un paquet avec une adresse source 172.18.20.14, une adresse de destination 172.18.20.40 et un protocole 21 est reçu sur l’interface, le paquet est-il autorisé ou refusé?", "options": ["Autorisé", "refusé"], "correct": [0], "image": null, "type": "single"}, {"id": "74", "question": "Reliez les types de périphérique ou de service WAN à leur description. (Les options ne doivent pas être toutes utilisées.)", "options": ["CPE —> périphériques et câblage intérieur situés à la périphérie de l'entreprise", "DCE —> appareils qui fournissent une interface à laquelle les clients peuvent se connecter dans le cloud WAN", "DTE —> dispositifs clients qui transmettent les données d'un réseau client pour transmission sur le WAN", "boucle locale —> une connexion physique du client au fournisseur de services POP"], "correct": [0, 1, 2, 3], "image": "https://ccnareponses.com/wp-content/uploads/2021/12/2024-10-17_104540.jpg", "type": "multiple"}, {"id": "75", "question": "Quel type de trafic est décrit comme étant capable de tolérer un certain temps de latence, de gigue et de perte sans effets perceptibles ?", "options": ["Voix", "Données", "Vidéo"], "correct": [0], "image": null, "type": "single"}, {"id": "76", "question": "Un administrateur configure OSPF à zone unique sur un routeur. L’un des réseaux qui doivent être annoncés est 192.168.0.0 255.255.252.0. Quel masque générique l’administrateur utiliserait-il dans l’instruction réseau OSPF?", "options": ["0.0.3.255", "0.0.0.7", "0.0.63.255", "0.0.0.3"], "correct": [0], "image": null, "type": "single"}, {"id": "77", "question": "Un technicien réseau est en train de configurer SNMPv3 et a défini un niveau de sécurité d’ authentification . Quel est l’effet de ce paramètre?", "options": ["authentifie un paquet à l’aide des algorithmes HMAC MD5 ou HMAC SHA et crypte le paquet avec les algorithmes DES, 3DES ou AES", "authentifie un paquet en utilisant soit la méthode HMAC avec MD5, soit la méthode SHA", "authentifie un paquet par une correspondance de chaîne du nom d’utilisateur ou de la chaîne de communauté", "authentifie un paquet en utilisant uniquement l’algorithme SHA"], "correct": [1], "image": null, "type": "single"}, {"id": "78", "question": "Qu’est-ce qui caractérise un hyperviseur de type 2 ?", "options": ["il convient mieux aux environnements des entreprises", "il est installé directement dans le matériel", "ne nécessite pas de logiciel de console de gestion", "il présente un accès direct aux ressources matérielles du serveur"], "correct": [2], "image": null, "type": "single"}, {"id": "79", "question": "Un data center a récemment mis à jour un serveur physique pour héberger plusieurs systèmes d’exploitation sur un seul processeur... Quelle est la tendance liée au réseau qui est implémentée par le data center dans cette situation ?", "options": ["BYOD", "Garantir l’intégrité des communications", "virtualisation", "Collaboration en ligne"], "correct": [2], "image": null, "type": "single"}, {"id": "80", "question": "Reportez-vous à l’illustration. Comment la liste de contrôle d’accès doit-elle être appliquée ?", "options": ["en sortie sur l’interface G0/1 de R1", "en sortie sur l’interface S0/0/1 de R2", "en entrée sur l’interface G0/0 de R2", "en entrée sur l’interface G0/1 de R1"], "correct": [0], "image": "https://ccnareponses.com/wp-content/uploads/2022/05/i282157v1n1_282156.png", "type": "single"}, {"id": "81", "question": "Reportez-vous à l’illustration. Si le commutateur redémarre et que tous les routeurs doivent rétablir les adjacences OSPF, quels routeurs deviendront les nouveaux DR et BDR ?", "options": ["Le routeur R4 deviendra le DR et le routeur R3 deviendra le BDR.", "Le routeur R2 deviendra le DR et le routeur R1 deviendra le BDR.", "Le router R3 deviendra DR et le routeur R2 deviendra BDR.", "Le routeur R1 deviendra le DR et le routeur R2 deviendra le BDR."], "correct": [2], "image": "https://ccnareponses.com/wp-content/uploads/2022/05/i255837v1n1_255837.gif", "type": "single"}, {"id": "82", "question": "Un routeur OSPF a trois réseaux directement connectés: 10.0.0.0/16, 10.1.0.0/16 et 10.2.0.0/16. Quelle commande réseau OSPF annoncerait uniquement le réseau 10.1.0.0 aux voisins?", "options": ["router(config-router)# network 10.1.0.0 255.255.255.0 area 0", "router(config-router)# network 10.1.0.0 0.0.0.0 area 0", "router(config-router)# network 10.1.0.0 0.0.255.255 area 0", "router(config-router)# network 10.1.0.0 0.0.15.255 area 0"], "correct": [2], "image": null, "type": "single"}, {"id": "83", "question": "Toute entreprise a décidé de réduire son empreinte environnementale... Quel service ou quelle technologie permettrait de répondre à cette exigence ?", "options": ["services de cloud", "ACI Cisco", "data center", "APIC-EM"], "correct": [0], "image": null, "type": "single"}, {"id": "84", "question": "Quel protocole synchronise avec une horloge maître privée ou avec un serveur accessible au public sur l’internet?", "options": ["MPLS", "TFTP", "Protocole NTP", "CBWFQ"], "correct": [2], "image": null, "type": "single"}, {"id": "85", "question": "Quelle étape du processus de routage d’état de liaison est décrite par un routeur exécutant un algorithme pour déterminer le meilleur chemin vers chaque destination?", "options": ["exécution de l’algorithme SPF", "déclarer un voisin inaccessible", "sélection de l’ID du routeur", "création de la table de topologie"], "correct": [0], "image": "https://ccnareponses.com/wp-content/uploads/2021/12/2022-05-09_165502.jpg", "type": "single"}, {"id": "86", "question": "Le trafic vidéo a ses caractéristiques propres. Citez-en deux. (Choisissez deux propositions.)", "options": ["Le trafic vidéo est imprévisible et fluctuant.", "Le trafic vidéo consomme moins de ressources de réseau que le trafic vocal.", "Le trafic vidéo nécessite un minimum de 30 kbit/s de bande passante.", "Le trafic vidéo est plus résilient à la perte que le trafic vocal.", "La latence du trafic vidéo doit être inférieure à 400 ms."], "correct": [0, 4], "image": null, "type": "multiple"}, {"id": "87", "question": "Examinez l’illustration. Un PC à l’adresse 10.1.1.45 ne peut pas accéder à Internet. Quelle est la cause la plus probable du problème ?", "options": ["Le pool NAT est épuisé.", "La liste de contrôle d’accès ACL 1 n’a pas été correctement configurée.", "Le masque de réseau incorrect a été utilisé sur le pool NAT.", "Les interfaces interne et externe ont été configurées à l’envers."], "correct": [0], "image": "https://ccnareponses.com/wp-content/uploads/2022/05/41.jpg", "type": "single"}, {"id": "88", "question": "Reportez-vous à l’illustration. Quelle(s) adresse(s) représente(nt) l’adresse globale interne ?", "options": ["Toute adresse dans le réseau 10.1.1.0", "192.168.0.100", "209.165.20.25", "10.1.1.2"], "correct": [2], "image": "https://ccnareponses.com/wp-content/uploads/2022/05/2017-06-26_224149.jpg", "type": "single"}, {"id": "89", "question": "Examinez l’illustration. Depuis quel emplacement ce routeur a-t-il chargé IOS ?", "options": ["NVRAM​", "ROM", "mémoire flash", "Mémoire vive (RAM)", "Un serveur TFTP"], "correct": [2], "image": "https://ccnareponses.com/wp-content/uploads/2022/05/i208382v1n1_208382-1.png", "type": "single"}, {"id": "90", "question": "Examinez l’illustration. R1 est configuré pour la NAT, comme illustré. Quel problème présente la configuration ?", "options": ["Le pool NAT est incorrect.", "NAT-POOL2 n’est pas relié à la liste de contrôle d’accès ACL 1.", "La commande access-list 1 est mal configurée.", "L’interface Fa0/0 devrait être identifiée en tant qu’interface NAT externe."], "correct": [1], "image": "https://ccnareponses.com/wp-content/uploads/2022/05/i212258v1n1_212258-2-1.jpg", "type": "single"}, {"id": "91", "question": "Quelles sont les trois déclarations généralement considérées comme les meilleures pratiques en matière de placement des ACL ? (Choisissez trois réponses.)", "options": ["Placer des ACL étendues à proximité de l’adresse IP de destination du trafic.", "Placer les ACL standard à proximité de l’adresse IP source du trafic.", "Placer les ACL standard à proximité de l’adresse IP de destination du trafic.", "Pour chaque ACL entrante placée sur une interface, il doit y avoir une ACL sortante correspondante.", "Filtrer le trafic indésirable avant qu’il ne se déplace sur une liaison à faible bande passante.", "Placer des ACL étendues à proximité de l’adresse IP source du trafic."], "correct": [2, 4, 5], "image": null, "type": "multiple"}, {"id": "92", "question": "Examinez l’illustration... Quelle liste de contrôle d’accès étendue doit être utilisée pour filtrer ce trafic et comment doit-elle être appliquée ? (Choisissez deux réponses.)", "options": ["access-list 105 permit tcp host 10.0.70.23 host 10.0.54.5 eq 20...", "R1(config)# interface gi0/0 ... ip access-group 105 out", "R2(config)# interface gi0/0 ... ip access-group 105 in", "access-list 105 permit tcp host 10.0.54.5 any eq www ...", "R1(config)# interface s0/0/0 ... ip access-group 105 out", "access-list 105 permit ip host 10.0.70.23 host 10.0.54.5 ..."], "correct": [0, 1], "image": "https://ccnareponses.com/wp-content/uploads/2021/12/asdiasd305772n1v2.png", "type": "multiple"}, {"id": "93", "question": "Quels sont les deux objectifs du lancement d’une attaque de reconnaissance sur un réseau ? (Choisissez deux réponses.)", "options": ["Transmettre les privilèges d’accès", "Récupérer et modifier des données", "Analyser l’accessibilité", "Empêcher l’accès des autres utilisateurs au système", "Collecter des informations relatives au réseau et aux périphériques"], "correct": [2, 4], "image": null, "type": "multiple"}, {"id": "94", "question": "Une entreprise envisage de changer sa connexion WAN... Quelles sont les deux options représentatives d’une architecture WAN privée ? (Choisissez deux propositions.)", "options": ["ligne d’abonné numérique", "WAN Ethernet", "ligne louée", "Wi-Fi municipal", "câble"], "correct": [1, 2], "image": null, "type": "multiple"}, {"id": "95", "question": "Quels sont les deux protocoles IPSec utilisés pour fournir l’intégrité des données ?", "options": ["MD5", "DH", "AES", "SHA", "RSA"], "correct": [0, 3], "image": null, "type": "multiple"}, {"id": "96", "question": "Quel protocole offrant des services d’authentification, d’intégrité et de confidentialité est également un type de réseau privé virtuel ?", "options": ["IPsec", "ESP", "AES", "MD5"], "correct": [0], "image": null, "type": "single"}, {"id": "97", "question": "Citez une raison d’utiliser la commande ip ospf priority lorsque le protocole de routage OSPF est actif.", "options": ["constituer une porte dérobée pour la connectivité pendant le processus de convergence", "rationaliser et accélérer le processus de convergence", "activer le processus de voisinage OSPF", "influencer le processus de sélection DR/BDR"], "correct": [3], "image": null, "type": "single"}, {"id": "98", "question": "Reportez-vous à l’illustration. Quels périphériques sont conservés sur le domaine défaillant lorsque le commutateur S3 n’est plus sous tension ?", "options": ["PC_3 et AP_2", "S1 et S4", "PC_3 et PC_2", "AP_2 et AP_1", "S4 et PC_2"], "correct": [0], "image": "https://ccnareponses.com/wp-content/uploads/2021/12/12i300534n1v2.png", "type": "single"}, {"id": "99", "question": "Reportez-vous à l’illustration. Quelle est la fonction de la commande marquée d’une flèche dans les informations de configuration partielle d’un routeur à large bande Cisco ?", "options": ["Elle définit les adresses attribuées à un pool NAT.", "Elle définit les adresses qui peuvent être traduites.", "Elle définit les adresses autorisées hors du routeur.", "Elle définit les adresses autorisées dans le routeur."], "correct": [1], "image": "https://ccnareponses.com/wp-content/uploads/2021/12/123i292427n1v3.jpg", "type": "single"}, {"id": "100", "question": "Quel est l’état opérationnel final qui se forme entre un routeur DR et un routeur DROTHER OSPF une fois qu’ils atteignent la convergence ?", "options": ["établi", "two-way", "full", "loading"], "correct": [2], "image": null, "type": "single"}, {"id": "101", "question": "Qu’utilise-t-on pour préremplir la table de contiguïté pour les appareils Cisco qui utilisent le CEF pour traiter les paquets ?", "options": ["la FIB", "la table de routage", "le DSP", "la table ARP"], "correct": [3], "image": null, "type": "single"}, {"id": "102", "question": "Faites correspondre la méthode HTTP avec l’opération RESTful.", "options": ["POST –>> Créer", "OBTENIR –>> Lis", "METTRE/PATCH –>> Mettre à jour/Remplacer ? Modifier", "Delet –>> Supprimer"], "correct": [0, 1, 2, 3], "image": "https://ccnareponses.com/wp-content/uploads/2021/12/2024-10-17_095512.jpg", "type": "multiple"}, {"id": "103", "question": "Quels sont les trois composants utilisés dans la partie requête d’une requête API RESTful typique ? (Choisissez trois réponses.)", "options": ["paramètres", "Serveur API", "protocole", "clé", "Ressources", "format"], "correct": [0, 3, 5], "image": null, "type": "multiple"}, {"id": "104", "question": "Quel type de paquet OSPFv2 est utilisé pour transmettre les informations de modification de liaison OSPF ?", "options": ["Description de base de données (DD)", "Paquet LSA d’accusé de réception d’état de liens", "Les mises à jour d’état de liens", "hello"], "correct": [2], "image": null, "type": "single"}, {"id": "105", "question": "Un administrateur réseau est en train de dépanner un problème OSPF qui implique la contiguïté des voisins. Que doit-il faire ?", "options": ["Assurez-vous que la priorité du routeur est unique sur chaque routeur.", "Assurez-vous que l’ID du routeur est inclus dans le paquet hello.", "Assurez-vous que l’option RR/BDR est terminée.", "Assurez-vous que les minuteurs d’intervalle Hello et Dead sont les mêmes sur tous les routeurs."], "correct": [3], "image": null, "type": "single"}, {"id": "106", "question": "Quelle étape du processus de routage d’état de liens est décrite par un routeur qui construit une base de données d’état de liaison basée sur les LSA reçues?", "options": ["déclarer un voisin inaccessible", "équilibrage de charge chemins à coût égal", "choisir la meilleure route", "création de la table de topologie"], "correct": [3], "image": null, "type": "single"}, {"id": "107", "question": "Pourquoi l’équipe utiliserait-elle des outils médico-légaux ?", "options": ["pour détecter toute preuve d’un piratage ou d’un programme malveillant dans un ordinateur ou un réseau", "pour inverser l’ingénierie des fichiers binaires...", "pour détecter les outils installés dans les fichiers et répertoires...", "Ce sont des systèmes d’exploitation spécialement conçus..."], "correct": [0], "image": null, "type": "single"}, {"id": "108", "question": "Reportez-vous à l’illustration. Quel est le meilleur type et placement ACL à utiliser dans cette situation ?", "options": ["ACL entrante standard sur R1 G0/1", "ACL entrante standard sur les lignes R1 vty", "ACL étendue entrante sur R3 S0/0/1", "ACL entrante étendue sur R3 G0/0"], "correct": [0], "image": "https://ccnareponses.com/wp-content/uploads/2021/12/11i386750n1v3.jpg", "type": "single"}, {"id": "109", "question": "Reportez-vous à l’illustration. Où l’administrateur doit-il placer cette liste ACL pour une utilisation optimale des ressources réseau ?", "options": ["sortant sur le routeur B Fa0/0", "entrant sur le routeur A Fa0/0", "sortant sur le routeur A Fa0/1", "entrant sur le routeur B Fa0/1"], "correct": [1], "image": "https://ccnareponses.com/wp-content/uploads/2021/12/ai386471n1v3.png", "type": "single"}, {"id": "110", "question": "Quelle est l’approche adoptée par le technicien (centre d'assistance) ?", "options": ["substitution", "Approche ascendante", "diviser et conquérir", "Approche descendante"], "correct": [2], "image": null, "type": "single"}, {"id": "111", "question": "Dans un réseau d’entreprise de grande taille, citez deux fonctions effectuées par les routeurs au niveau de la couche de distribution. (Choisissez deux propositions.)", "options": ["connecter les réseaux distants", "connecter les utilisateurs au réseau", "fournir un réseau fédérateur à haut débit", "assurer la sécurité du trafic de données", "fournir une alimentation PoE (Power over Ethernet) aux périphériques"], "correct": [0, 3], "image": null, "type": "multiple"}, {"id": "112", "question": "Que peut conclure l’administrateur réseau du résultat indiqué (Standard IP access list 2...) ?", "options": ["Le trafic des deux périphériques ne peut pas accéder à l’un des ports de routeur...", "Deux périphériques connectés au routeur sont affectés à l’adresse IP 192.168.10.x.", "Le trafic de l’un des périphériques ne peut pas accéder à l’un des ports de routeur...", "Deux périphériques ont pu utiliser SSH ou Telnet pour obtenir l’accès au routeur."], "correct": [3], "image": null, "type": "single"}, {"id": "113", "question": "Reportez-vous à l’illustration. Du fait que le trafic est transféré sur une interface de sortie avec un traitement QoS, quelle technique de prévention de la congestion est utilisée ?", "options": ["classification et marquage", "détection anticipée aléatoire pondérée", "mise en forme du trafic", "régulation du trafic"], "correct": [3], "image": "https://ccnareponses.com/wp-content/uploads/2021/12/aa1i305927n1v2.png", "type": "single"}, {"id": "114", "question": "Quelle étape du processus de routage d’état de liaison est décrite par un routeur qui envoie des paquets Hello sur toutes les interfaces compatibles OSPF ?", "options": ["sélection du routeur désigné", "échange d’annonces à état de liens", "injection de la route par défaut", "établissement des contiguïtés de voisinage"], "correct": [3], "image": null, "type": "single"}, {"id": "115", "question": "Pourquoi l’équipe utiliserait-elle des applications telles que John l’Éventreur, THC Hydra, RainbowCrack et Medusa ?", "options": ["faire des suppositions répétées afin de casser un mot de passe.", "Ce sont des systèmes d’exploitation spécialement conçus...", "pour coder les données, à l’aide de schémas d’algorithmes...", "pour inverser l’ingénierie des fichiers binaires..."], "correct": [0], "image": null, "type": "single"}, {"id": "116", "question": "Reportez-vous à l’illustration. Quel est le meilleur type et placement ACL à utiliser dans cette situation ?", "options": ["ACL entrante standard sur l’interface WAN R2 se connectant à l’internet", "ACL sortante standard sur R1 G0/0", "ACL entrante standard sur R1 G0/0", "ACL sortante standard sur l’interface WAN R2 vers Internet"], "correct": [3], "image": "https://ccnareponses.com/wp-content/uploads/2021/12/11i386750n1v3.jpg", "type": "single"}, {"id": "117", "question": "Examinez l’illustration... Cependant, une fois que la liste de contrôle d’accès est appliquée à l’interface Fa0/0, les connexions Telnet sont refusées. Quelle est la cause de l’échec de la connexion ?", "options": ["L’entrée de contrôle d’accès d’autorisation spécifie un numéro de port incorrect.", "Le mot de passe secret actif n’est pas configuré sur R1.", "L’entrée de liste de contrôle d’autorisation doit spécifier le protocole IP et non le protocole TCP.", "Le réseau de groupe informatique est inclus dans l’instruction de refus.", "La commande login n’a pas été saisie pour les lignes vty."], "correct": [3], "image": "https://ccnareponses.com/wp-content/uploads/2021/12/112i238703n1v2.png", "type": "single"}, {"id": "118", "question": "Quelles sont les deux informations qui doivent apparaître dans le schéma de topologie logique d’un réseau ? (Choisissez deux propositions.)", "options": ["les type et identifiant des câbles", "la spécification des câbles", "le type de périphérique", "l’identifiant de l’interface", "la version d’OS/IOS", "le type de connexion"], "correct": [3, 5], "image": null, "type": "multiple"}, {"id": "119", "question": "Quelle est la description correcte d’une caractéristique des commutateurs Catalyst 2960 Cisco ?", "options": ["Leur utilisation en tant que commutateurs de couche de distribution est la plus appropriée.", "Les nouveaux commutateurs Cisco Catalyst 2960-C prennent en charge l’alimentation PoE passthrough.", "Il s’agit de commutateurs modulaires.", "Ils ne prennent pas en charge une interface virtuelle commutée (SVI) active..."], "correct": [1], "image": null, "type": "single"}, {"id": "120", "question": "Quelle fonctionnalité le mGRE offre-t-il à la technologie DMVPN ?", "options": ["Il permet le transport sécurisé d’informations sensibles sur des réseaux publics...", "C’est une solution logicielle Cisco qui permet de créer plusieurs VPN...", "Il permet de créer des tunnels attribués dynamiquement via une source de tunnel permanente au niveau du concentrateur et des destinations de tunnel attribuées dynamiquement au niveau des rayons.", "Ce dernier crée une base de données de mappage des adresses IP publiques..."], "correct": [2], "image": null, "type": "single"}, {"id": "121", "question": "Citez deux types d’attaques utilisés sur les programmes de résolution DNS ouverts. Citez-en deux.", "options": ["utilisation des ressources", "flux rapide", "amplification et réflexion", "empoisonnement ARP", "amortissement"], "correct": [0, 2], "image": null, "type": "multiple"}, {"id": "122", "question": "Quelle commande serait utilisée dans le cadre de la configuration NAT ou PAT pour effacer les entrées dynamiques avant l’expiration du délai d’expiration ?", "options": ["clear ip pat statistics", "clear ip dhcp", "clear access-list counters", "clear ip nat translation"], "correct": [3], "image": null, "type": "single"}, {"id": "123", "question": "Quel type de VPN se connecte à l’aide de la fonctionnalité TLS (Transport Layer Security) ?", "options": ["VPN multipoint dynamique", "Interface de tunnel virtuel IPSec", "VPN SSL", "GRE sur IPsec"], "correct": [2], "image": null, "type": "single"}, {"id": "124", "question": "Un étudiant... a pris des centaines de photos sur un smartphone et veut les sauvegarder en cas de perte. Quel service ou quelle technologie permettrait de répondre à cette exigence ?", "options": ["services de cloud", "SDN (Software Defined Networking)", "Serveurs dédiés", "ACI Cisco"], "correct": [0], "image": null, "type": "single"}, {"id": "125", "question": "Examinez l’illustration... D’après ce journal, quelle est la cause la plus probable du problème ?", "options": ["La liste d’accès source de la NAT correspond à une plage d’adresses incorrecte.", "Les interfaces NAT interne et externe ont été configurées à l’envers.", "L’adresse globale interne ne se trouve pas sur le même sous-réseau que le FAI.", "L’adresse sur Fa0/0 devrait être 64.100.0.1."], "correct": [2], "image": "https://ccnareponses.com/wp-content/uploads/2021/12/i239075n1v1.png", "type": "single"}, {"id": "126", "question": "Quel est le nom de la couche dans la conception du réseau commuté sans frontière de Cisco qui est considérée comme la dorsale utilisée pour la connectivité à haut débit et l’isolation des défauts ?", "options": ["couche d’accès réseau", "réseau", "accès", "cœur de réseau", "liaison de données"], "correct": [3], "image": null, "type": "single"}, {"id": "127", "question": "Reportez-vous à l’illustration. Quelle conclusion pouvez-vous tirer de ce réseau à accès multiple OSPF ?", "options": ["Lorsqu’un routeur désigné (DR) est choisi, tous les autres routeurs non désignés...", "Lorsque le DR est sélectionné, le nombre de contiguïtés passe de 6 à 3.", "Tous les routeurs DROTHER envoient des LSA au routeur désigné (DR)...", "Si le DR cesse de générer des paquets Hello, un BDR est choisi..."], "correct": [1], "image": "https://ccnareponses.com/wp-content/uploads/2021/12/i300450n1v2.png", "type": "single"}, {"id": "128", "question": "Si le client Cisco AnyConnect n’est pas préinstallé sur un hôte externe, comment l’hôte aurait-il accès à l’image du client ?", "options": ["L’hôte initie une connexion sans client à un serveur TFTP pour télécharger le client.", "L’hôte initie une connexion VPN sans client à l’aide d’un navigateur Web conforme pour télécharger le client.", "L’hôte initie une connexion sans client à un serveur FTP pour télécharger le client.", "Le client Cisco AnyConnect est installé par défaut sur la plupart des principaux systèmes d’exploitation."], "correct": [1], "image": null, "type": "single"}, {"id": "129", "question": "Quel mécanisme de mise en file d’attente ne permet pas de donner la priorité ni de mettre en mémoire tampon mais transfère simplement les paquets dans l’ordre où ils arrivent ?", "options": ["WFQ", "FIFO", "LLQ", "CBWFQ"], "correct": [1], "image": null, "type": "single"}, {"id": "130", "question": "Quel composant de l’architecture ACI traduit les politiques d’application en programmes de réseau ?", "options": ["le contrôleur d’infrastructure de politique d’application", "les points de terminaison du profil d’applications réseau", "l’hyperviseur", "le commutateur Nexus 9000"], "correct": [0], "image": null, "type": "single"}, {"id": "131", "question": "Qu’est-ce qui caractérise la topologie Spine-Leaf à deux niveaux de l’architecture de fabric Cisco ACI ?", "options": ["Les commutateurs Spine et Leaf sont toujours reliés via des commutateurs centraux.", "Les commutateurs Leaf se connectent toujours aux commutateurs Spine et sont interconnectés...", "Les commutateurs Spine se connectent aux commutateurs Leaf et se connectent les uns aux autres...", "Les commutateurs Leaf sont toujours associés à des commutateurs Spine, mais ne le sont jamais entre eux."], "correct": [3], "image": null, "type": "single"}, {"id": "132", "question": "Un administrateur configure OSPF à zone unique sur un routeur. L’un des réseaux qui doivent être annoncés est 192.168.0.0 255.255.254.0. Quel masque générique l’administrateur utiliserait-il dans l’instruction réseau OSPF ?", "options": ["0.0.1.255", "0.0.63.255", "0.0.15.255", "0.0.31.255"], "correct": [0], "image": null, "type": "single"}, {"id": "133", "question": "Reportez-vous à l’illustration. Quel est le meilleur type et placement ACL à utiliser dans cette situation ?", "options": ["ACL entrante standard sur R1 G0/0", "ACL étendue sortante sur l’interface WAN R2 vers l’internet", "ACL étendue entrante sur R2 S0/0/0", "ACL entrante standard sur l’interface WAN R2 se connectant à l’internet"], "correct": [1], "image": "https://ccnareponses.com/wp-content/uploads/2021/12/11i386750n1v3.jpg", "type": "single"}, {"id": "134", "question": "Une ACL est appliquée en entrée sur une interface de routeur... Si un paquet avec une adresse source 192.168.10.45, une adresse de destination 10.10.3.27 et un protocole de 80 est reçu sur l’interface, le paquet est-il autorisé ou refusé ?", "options": ["Autorisé", "refusé"], "correct": [0], "image": null, "type": "single"}, {"id": "135", "question": "Quelle commande serait utilisée dans le cadre de la configuration NAT ou PAT pour définir un pool d’adresses pour la traduction ?", "options": ["ip nat inside source static 172.19.89.13 198.133.219.65", "ip nat outside", "ip nat inside source list 24 interface serial 0/1/0 overload", "ip nat pool POOL-STAT 64.100.14.17 64.100.14.30 netmask 255.255.255.240"], "correct": [3], "image": null, "type": "single"}, {"id": "_9", "question": "Un administrateur réseau a été chargé de créer un plan de reprise après sinistre... Quel service ou technologie répondrait à cette exigence ?", "options": ["centre de données", "virtualisation", "serveurs dédiés", "réseau défini par logiciel"], "correct": [0], "image": null, "type": "single"}, {"id": "_13", "question": "Un client a besoin d’une connexion WAN de zone métropolitaine qui fournit une bande passante dédiée à haut débit entre deux sites. Quel type de connexion WAN répondrait le mieux à ce besoin ?", "options": ["réseau à commutation de paquets", "réseau étendu Ethernet", "réseau à commutation de circuits", "MPLS"], "correct": [1], "image": null, "type": "single"}, {"id": "_14", "question": "Pourquoi l’équipe utiliserait-elle des débogueurs ?", "options": ["pour détecter les outils installés dans les fichiers et les répertoires...", "pour désosser les fichiers binaires lors de l’écriture d’exploits et de l’analyse de logiciels malveillants", "pour obtenir des systèmes d’exploitation spécialement conçus...", "pour détecter toute preuve de piratage..."], "correct": [1], "image": null, "type": "single"}, {"id": "_19", "question": "Quelle fonctionnalité doit être activée sur le routeur de l’entreprise pour que les appareils de bureau accèdent à Internet ?", "options": ["UPnP", "Filtrage MAC", "NAT", "Qualité de service"], "correct": [2], "image": null, "type": "single"}, {"id": "_44", "question": "Un attaquant redirige le trafic vers une fausse passerelle par défaut pour tenter d’intercepter le trafic de données d’un réseau commuté. Quel type d’attaque pourrait y parvenir ?", "options": ["Inondation TCP SYN", "Tunnelisation DNS", "Usurpation DHCP", "Empoisonnement du cache ARP"], "correct": [2], "image": null, "type": "single"}, {"id": "_46", "question": "Pourquoi l’équipe utiliserait-elle des renifleurs de paquets ?", "options": ["pour détecter les outils installés dans les fichiers...", "pour détecter toute preuve de piratage...", "pour sonder et tester la robustesse d’un pare-feu...", "pour capturer et analyser les paquets dans les LAN Ethernet traditionnels ou les WLAN"], "correct": [3], "image": null, "type": "single"}, {"id": "_53", "question": "Quels sont les deux scénarios qui entraîneraient une incompatibilité duplex ? (Choisissez deux réponses.)", "options": ["connecter un appareil avec négociation automatique à un autre qui est manuellement réglé sur full-duplex", "démarrage et arrêt d’une interface de routeur pendant une opération normale", "connecter un appareil avec une interface fonctionnant à 100 Mbps à un autre...", "configuration incorrecte du routage dynamique", "régler manuellement les deux appareils connectés sur différents modes duplex"], "correct": [0, 4], "image": null, "type": "multiple"}, {"id": "_57", "question": "Quels types de ressources sont nécessaires pour un hyperviseur de type 1 ?", "options": ["un VLAN dédié", "une console de gestion", "un système d’exploitation hôte"], "correct": [1], "image": null, "type": "single"}, {"id": "_69", "question": "Quels sont les deux énoncés décrivant l’utilisation d’algorithmes asymétriques ? (Choisissez deux réponses.)", "options": ["Les clés publiques et privées peuvent être utilisées de manière interchangeable.", "Si une clé publique est utilisée pour chiffrer les données, une clé publique doit être utilisée pour déchiffrer les données.", "Si une clé privée est utilisée pour chiffrer les données, une clé publique doit être utilisée pour déchiffrer les données.", "Si une clé publique est utilisée pour chiffrer les données, une clé privée doit être utilisée pour déchiffrer les données.", "Si une clé privée est utilisée pour chiffrer les données, une clé privée doit être utilisée pour déchiffrer les données."], "correct": [2, 3], "image": null, "type": "multiple"}, {"id": "_70", "question": "Reportez-vous à l’illustration. Où le marquage initial doit-il avoir lieu pour établir la limite de confiance ?", "options": ["Frontière de confiance 4", "Frontière de confiance 3", "Frontière de confiance 1", "Frontière de confiance 2"], "correct": [2], "image": "https://ccnareponses.com/wp-content/uploads/2022/05/i290000v1n1_Trust-Boundary2-1.jpg", "type": "single"}, {"id": "_71", "question": "Quels sont les deux avantages de l’extension de la connectivité de la couche d’accès aux utilisateurs via un support sans fil ? (Choisissez deux réponses.)", "options": ["coûts réduits", "diminution du nombre de points de défaillance critiques", "flexibilité accrue", "augmentation de la disponibilité de la bande passante", "plus d’options de gestion du réseau"], "correct": [0, 2], "image": null, "type": "multiple"}, {"id": "_74", "question": "Une ACL est appliquée en entrée sur une interface de routeur... Si un paquet avec une adresse source de 10.1.1.201, une adresse de destination de 192.31.7.45 et un protocole de 23 est reçu sur l’interface, le paquet est-il autorisé ou refusé ?", "options": ["autorisé", "refusé"], "correct": [1], "image": null, "type": "single"}, {"id": "_76", "question": "Reportez-vous à l’illustration. Quel format de données est utilisé pour représenter les données pour les applications d’automatisation de réseau ?", "options": ["XML", "YAML", "HTML", "JSON"], "correct": [3], "image": "https://ccnareponses.com/wp-content/uploads/2022/05/i349058v2n1_347058-1.png", "type": "single"}, {"id": "_77", "question": "Quelle étape QoS doit avoir lieu avant que les paquets puissent être marqués ?", "options": ["classification", "mise en forme", "faire la queue", "police"], "correct": [0], "image": null, "type": "single"}, {"id": "_79", "question": "Une entreprise doit interconnecter plusieurs succursales dans une zone métropolitaine... Quelle technologie recommander ?", "options": ["Frame Relay", "réseau étendu Ethernet", "VSAT", "RNIS"], "correct": [1], "image": null, "type": "single"}, {"id": "_81", "question": "Une ACL est appliquée en entrée sur une interface de routeur... Si un paquet avec une adresse source de 10.1.3.8, une adresse de destination de 10.10.3.8 et un protocole de 53 est reçu sur l’interface, le paquet est-il autorisé ou refusé ?", "options": ["refusé", "autorisé"], "correct": [0], "image": null, "type": "single"}, {"id": "_86", "question": "Reportez-vous à l’illustration. Quel est le meilleur type et emplacement ACL à utiliser dans cette situation ?", "options": ["LCA étendue sortante sur l’interface WAN R2 vers Internet", "ACL standard sortant sur l’interface WAN R2 vers Internet", "ACL standard sortant sur R2 S0/0/0", "LCA étendues entrantes sur R1 G0/0 et G0/1"], "correct": [3], "image": "https://ccnareponses.com/wp-content/uploads/2022/05/i350685v1n1_C3M4-Diagram-1.jpg", "type": "single"}, {"id": "_90", "question": "Dans quel état OSPF l’élection DR/BDR est-elle effectuée ?", "options": ["ExStart", "Init", "Bidirectionnel", "Échange"], "correct": [2], "image": null, "type": "single"}, {"id": "_93", "question": "Reportez-vous à l’illustration. Si le commutateur redémarre et que tous les routeurs doivent rétablir les contiguïtés OSPF, quels routeurs deviendront les nouveaux DR et BDR ?", "options": ["Le routeur R3 deviendra le DR et le routeur R1 deviendra le BDR.", "Le routeur R4 deviendra le DR et le routeur R3 deviendra le BDR.", "Le routeur R1 deviendra le DR et le routeur R2 deviendra le BDR.", "Le routeur R3 deviendra le DR et le routeur R2 deviendra le BDR."], "correct": [0], "image": "https://ccnareponses.com/wp-content/uploads/2022/05/i255837v1n1_255837-2.gif", "type": "single"}, {"id": "_94", "question": "Quel type de serveur serait utilisé pour conserver un enregistrement historique des messages provenant des périphériques réseau surveillés ?", "options": ["DNS", "imprimer", "DHCP", "syslog", "authentification"], "correct": [3], "image": null, "type": "single"}, {"id": "_95", "question": "Lorsque QoS est implémenté dans un réseau convergé, quels sont les deux facteurs qui peuvent être contrôlés pour améliorer les performances du réseau pour le trafic en temps réel ? (Choisissez deux réponses.)", "options": ["adressage des paquets", "délai", "jitter", "routage de paquets", "vitesse de liaison"], "correct": [1, 2], "image": null, "type": "multiple"}, {"id": "_97", "question": "Quel protocole envoie des annonces périodiques entre les appareils Cisco connectés afin de connaître le nom de l’appareil, la version de l’IOS, ainsi que le nombre et le type d’interfaces ?", "options": ["CDP", "SNMP", "NTP", "LLDP"], "correct": [0], "image": null, "type": "single"}, {"id": "_102", "question": "Quel type de VPN permet la multidiffusion et la diffusiontrafic rapide via un VPN de site à site sécurisé ?", "options": ["VPN multipoint dynamique", "VPN SSL", "Interface de tunnel virtuel IPsec", "GRE sur IPsec"], "correct": [3], "image": null, "type": "single"}, {"id": "_107", "question": "Comment la virtualisation facilite-t-elle la reprise après sinistre dans un centre de données ?", "options": ["Le matériel n’a pas besoin d’être identique.", "(Autre cas) Le matériel sur le site de récupération ne doit pas nécessairement être identique à l’équipement de production.", "L’alimentation est toujours fournie.", "Moins d’énergie est consommée.", "Le provisionnement du serveur est plus rapide."], "correct": [0, 1], "image": null, "type": "multiple"}, {"id": "_112", "question": "Quel protocole utilise des agents résidant sur des appareils gérés pour collecter et stocker des informations sur l’appareil et son fonctionnement ?", "options": ["SYSLOG", "TFTP", "CBWFQ", "SNMP"], "correct": [3], "image": null, "type": "single"}, {"id": "_113", "question": "Quel masque générique l’administrateur utiliserait-il dans la déclaration de réseau OSPF pour 10.27.27.0 255.255.255.0 ?", "options": ["0.0.0.63", "0.0.0.255", "0.0.0.31", "0.0.0.15"], "correct": [1], "image": null, "type": "single"}, {"id": "_114", "question": "Quand un routeur compatible OSPF passera-t-il de l’état Down à l’état Init ?", "options": ["lorsqu’une interface compatible OSPF devient active", "dès que le routeur démarre", "lorsque le routeur reçoit un paquet Hello d’un routeur voisin", "dès que le processus d’élection DR/BDR est terminé"], "correct": [2], "image": null, "type": "single"}, {"id": "_115", "question": "Quel type de trafic est décrit comme ayant un volume élevé de données par paquet ?", "options": ["données", "vidéo", "voix"], "correct": [1], "image": null, "type": "single"}, {"id": "_122", "question": "Une entreprise a consolidé plusieurs serveurs et recherche un programme ou un firmware pour créer et contrôler des machines virtuelles... Quel service ou technologie répondrait à cette exigence ?", "options": ["ACI Cisco", "réseau défini par logiciel", "Hyperviseur de type 1", "APIC-EM"], "correct": [2], "image": null, "type": "single"}, {"id": "_123", "question": "Quelle commande serait utilisée dans le cadre de la configuration de NAT ou PAT pour identifier les adresses locales internes à traduire ?", "options": ["ip nat inside source list 24 interface serial 0/1/0 surcharge", "ip nat inside source list 14 pool POOL-STAT surcharge", "liste d’accès 10 permis 172.19.89.0 0.0.0.255", "ip nat dans la liste des sources ACCTNG pool POOL-STAT"], "correct": [2], "image": null, "type": "single"}, {"id": "_125", "question": "Reportez-vous à l’illustration... Quel est le problème ?", "options": ["Le fichier existe déjà sur la clé USB et ne peut pas être écrasé.", "Le disque n’a pas été correctement formaté avec le système de fichiers FAT16.", "Il n’y a plus d’espace sur la clé USB.", "La clé USB n’est pas reconnue par le routeur.", "La commande utilisée par l’administrateur était incorrecte."], "correct": [4], "image": "https://ccnareponses.com/wp-content/uploads/2022/05/i208111v6n1_Question-8-1.png", "type": "single"}, {"id": "_126", "question": "Quels sont les trois types de VPN qui sont des exemples de VPN site à site gérés par l’entreprise ? (Choisissez trois réponses.)", "options": ["VPN MPLS de couche 3", "VPN IPsec", "VPN multipoint dynamique Cisco", "GRE sur VPN IPsec", "VPN SSL sans client", "VPN IPsec basé sur le client"], "correct": [1, 2, 3], "image": null, "type": "multiple"}, {"id": "_128", "question": "Dans un réseau OSPF, quelles sont les deux déclarations décrivant la base de données d’état des liens (LSDB) ? (Choisissez deux réponses.)", "options": ["Il peut être visualisé à l’aide de la commande show ip ospf database.", "Une table de voisinage est créée sur la base de la LSDB.", "Il contient une liste des meilleurs itinéraires vers un réseau particulier.", "Il contient une liste de tous les routeurs voisins avec lesquels un routeur a établi une communication bidirectionnelle.", "Tous les routeurs d’une zone ont une base de données d’état de liens identique."], "correct": [0, 4], "image": null, "type": "multiple"}, {"id": "_129", "question": "Dans un réseau OSPF, quelle structure OSPF est utilisée pour créer la table des voisins sur un routeur ?", "options": ["base de données de contiguïté", "base de données d’état des liens", "table de routage", "base de données de transfert"], "correct": [0], "image": null, "type": "single"}, {"id": "_130", "question": "Quel protocole est utilisé dans un système composé de trois éléments : un gestionnaire, des agents et une base de données d’informations ?", "options": ["MPLS", "SYSLOG", "SNMP", "TFTP"], "correct": [2], "image": null, "type": "single"}, {"id": "_131", "question": "Quel type de trafic est décrit comme n’étant pas résilient aux pertes ?", "options": ["données", "vidéo", "voix"], "correct": [1], "image": null, "type": "single"}, {"id": "_135", "question": "Une ACL est appliquée en entrée sur une interface de routeur... Si un paquet avec une adresse source de 198.133.219.100, une adresse de destination de 198.133.219.170 et un protocole de 23 est reçu sur l’interface, le paquet est-il autorisé ou refusé ?", "options": ["refusé", "autorisé"], "correct": [0], "image": null, "type": "single"}, {"id": "_140", "question": "Reportez-vous à l’illustration. Si le commutateur redémarre et que tous les routeurs doivent rétablir les contiguïtés OSPF, quels routeurs deviendront les nouveaux DR et BDR ?", "options": ["Le routeur R2 deviendra le DR et le routeur R4 deviendra le BDR.", "Le routeur R1 deviendra le DR et le routeur R3 deviendra le BDR.", "Le routeur R4 deviendra le DR et le routeur R3 deviendra le BDR.", "Le routeur R3 deviendra le DR et le routeur R2 deviendra le BDR."], "correct": [1], "image": "https://ccnareponses.com/wp-content/uploads/2022/05/2021-11-22_102145-1.jpg", "type": "single"}, {"id": "_145", "question": "Quelle commande serait utilisée dans le cadre de la configuration de NAT ou PAT pour afficher toutes les traductions statiques qui ont été configurées ?", "options": ["afficher les traductions ip nat", "afficher les traductions ip pat", "afficher le cache IP", "afficher la configuration en cours"], "correct": [0], "image": null, "type": "single"}, {"id": "_147", "question": "Quel type de VPN est le choix préféré pour la prise en charge et la facilité de déploiement pour l’accès à distance ?", "options": ["VPN SSL", "GRE sur IPsec", "VPN multipoint dynamique", "Interface de tunnel virtuel IPsec"], "correct": [0], "image": null, "type": "single"}, {"id": "_153", "question": "Une ACL est appliquée en entrée sur une interface de routeur... Si un paquet avec une adresse source de 192.168.10.244, une adresse de destination de 172.17.200.56 et un protocole de 80 est reçu sur l’interface, le paquet est-il autorisé ou refusé ?", "options": ["refusé", "autorisé"], "correct": [1], "image": null, "type": "single"}, {"id": "_154", "question": "Pourquoi l’équipe utiliserait-elle des applications telles que Nmap, SuperScan et Angry IP Scanner ?", "options": ["pour détecter les outils installés dans les fichiers...", "pour détecter toute preuve de piratage...", "pour désosser les fichiers binaires...", "pour sonder les périphériques réseau, les serveurs et les hôtes à la recherche de ports TCP ou UDP ouverts"], "correct": [3], "image": null, "type": "single"}, {"id": "_155", "question": "Quelle commande serait utilisée dans le cadre de la configuration de NAT ou PAT pour afficher les traductions PAT dynamiques créées par le trafic ?", "options": ["afficher les traductions ip pat", "afficher le cache IP", "afficher la configuration en cours", "afficher les traductions ip nat"], "correct": [3], "image": null, "type": "single"}, {"id": "_156", "question": "Un administrateur configure l’OSPF à zone unique sur un routeur. L’un des réseaux qui doit être annoncé est 172.16.91.0 255.255.255.192. Quel masque générique l’administrateur utiliserait-il dans la déclaration de réseau OSPF ?", "options": ["0.0.31.255", "0.0.0.63", "0.0.15.255", "0.0.7.255"], "correct": [1], "image": null, "type": "single"}, {"id": "_157", "question": "Quel type de trafic est décrit comme nécessitant une latence inférieure à 400 ms ?", "options": ["vidéo", "données", "voix"], "correct": [0], "image": null, "type": "single"}, {"id": "_160", "question": "Reportez-vous à l’illustration. Sur la base des informations fournies, que va faire l’administrateur réseau ?", "options": ["Une ACL sera placée sur l’interface R1 Gi0/0 et une ACL sera placée sur l’interface R2 Gi0/0.", "Seule une ACL numérotée fonctionnera dans cette situation.", "Une ACL sera placée sur l’interface R2 Gi0/0 et une ACL sera placée sur l’interface R2 S0/0/0.", "Deux ACL (une dans chaque direction) seront placées sur l’interface R2 Gi0/0."], "correct": [3], "image": "https://ccnareponses.com/wp-content/uploads/2022/05/temp-1593110686.3832-1.png", "type": "single"}, {"id": "_161", "question": "Quel protocole utilise des nombres de strates plus petits pour indiquer que le serveur est plus proche de la source horaire autorisée que des nombres de strates plus grands ?", "options": ["TFTP", "SYSLOG", "NTP", "MPLS"], "correct": [2], "image": null, "type": "single"}, {"id": "_165", "question": "Quel type de trafic est décrit comme ayant tendance à être imprévisible, incohérent et saccadé ?", "options": ["vidéo", "voix", "données"], "correct": [0], "image": null, "type": "single"}, {"id": "_167", "question": "Quel type de trafic est décrit comme composé de trafic nécessitant une priorité plus élevée s’il est interactif ?", "options": ["voix", "données", "vidéo"], "correct": [1], "image": null, "type": "single"}, {"id": "_168", "question": "Quel type de VPN offre une option flexible pour connecter un site central à des sites de succursale ?", "options": ["Interface de tunnel virtuel IPsec", "VPN MPLS", "VPN multipoint dynamique", "GRE sur IPsec"], "correct": [2], "image": null, "type": "single"}, {"id": "_176", "question": "Un ingénieur réseau a remarqué que certaines entrées de route réseau attendues ne s’affichent pas dans la table de routage. Quelles sont les deux commandes qui fourniront des informations supplémentaires sur l’état des adjacences de routeur, les intervalles de minuterie et l’ID de zone ? (Choisissez deux réponses.)", "options": ["afficher les protocoles IP", "afficher ip ospf voisin", "afficher la configuration en cours", "afficher l’interface ip ospf", "afficher ip route ospf"], "correct": [1, 3], "image": null, "type": "multiple"}, {"id": "_177", "question": "Quel type de VPN implique le transfert du trafic sur le backbone via l’utilisation d’étiquettes réparties entre les routeurs principaux ?", "options": ["VPN MPLS", "GRE sur IPsec", "Interface de tunnel virtuel IPsec", "VPN multipoint dynamique"], "correct": [0], "image": null, "type": "single"}, {"id": "_179", "question": "Pourquoi l’équipe utiliserait-elle des systèmes d’exploitation de piratage ?", "options": ["pour détecter toute preuve de piratage ou de logiciel malveillant...", "pour obtenir des systèmes d’exploitation spécialement conçus et préchargés avec des outils optimisés pour le piratage", "pour encoder les données...", "pour désosser les fichiers binaires..."], "correct": [1], "image": null, "type": "single"}, {"id": "_180", "question": "Quelle commande serait utilisée dans le cadre de la configuration de NAT ou PAT pour identifier une interface comme faisant partie du réseau mondial externe ?", "options": ["ip tape à l’intérieur", "liste d’accès 10 permis 172.19.89.0 0.0.0.255", "ip nat à l’intérieur", "ip nat extérieur"], "correct": [3], "image": null, "type": "single"}, {"id": "_181", "question": "Pour éviter d’acheter du nouveau matériel, une entreprise souhaite tirer parti des ressources système inactives et consolider le nombre de serveurs... Quel service ou technologie répondrait à cette exigence ?", "options": ["centre de données", "services cloud", "virtualisation", "serveurs dédiés"], "correct": [2], "image": null, "type": "single"}, {"id": "_182", "question": "Quel type de VPN achemine les paquets via des interfaces de tunnel virtuel pour le chiffrement et le transfert ?", "options": ["VPN MPLS", "Interface de tunnel virtuel IPsec", "VPN multipoint dynamique", "GRE sur IPsec"], "correct": [1], "image": null, "type": "single"}, {"id": "_184", "question": "Quel type de trafic est décrit comme utilisant TCP ou UDP en fonction du besoin de récupération d’erreur ?", "options": ["vidéo", "voix", "données"], "correct": [2], "image": null, "type": "single"}, {"id": "_188", "question": "Une ACL est appliquée en entrée sur l’interface du routeur... Si un paquet avec une adresse source de 172.18.20.40, une adresse de destination de 10.33.19.2 et un protocole de 21 est reçu sur l’interface, le paquet est-il autorisé ou refusé ?", "options": ["autorisé", "refusé"], "correct": [0], "image": null, "type": "single"}, {"id": "_189", "question": "Quel type de trafic est décrit comme consistant en un trafic dont la priorité est inférieure s’il n’est pas stratégique ?", "options": ["vidéo", "données", "voix"], "correct": [1], "image": null, "type": "single"}, {"id": "_192", "question": "Quel protocole permet au gestionnaire d’interroger les agents pour accéder aux informations de la MIB de l’agent ?", "options": ["CBWFQ", "SYSLOG", "TFTP", "SNMP"], "correct": [3], "image": null, "type": "single"}, {"id": "_195", "question": "Quel terme décrit l’ajout d’une valeur à l’en-tête du paquet, aussi proche que possible de la source, afin que le paquet corresponde à une politique définie ?", "options": ["police", "marquage routier", "détection précoce aléatoire pondérée (WRED)", "mise en forme du trafic", "chute de la queue"], "correct": [1], "image": null, "type": "single"}, {"id": "_196", "question": "Quels sont les trois facteurs liés au trafic qui influenceraient la sélection d’un type de lien WAN particulier ? (Choisissez trois réponses.)", "options": ["coût du lien", "quantité de trafic", "distance entre les sites", "fiabilité", "besoins de sécurité", "type de trafic"], "correct": [1, 4, 5], "image": null, "type": "multiple"}, {"id": "_197", "question": "Quelle commande serait utilisée dans le cadre de la configuration de NAT ou PAT pour lier les adresses locales internes au pool d’adresses disponibles pour la traduction PAT ?", "options": ["ip nat inside source list ACCTNG pool POOL-STAT", "délai de traduction ip nat 36000", "ip nat à l’intérieur de la liste source 14 pool POOL-STAT surcharge", "ip nat à l’intérieur de la source statique 172.19.89.13 198.133.219.65"], "correct": [2], "image": null, "type": "single"}, {"id": "_198", "question": "Quel protocole est un protocole de découverte de couche 2 indépendant du fournisseur qui doit être configuré séparément pour transmettre et recevoir des paquets d’informations ?", "options": ["SNMP", "MPLS", "LLDP", "NTP"], "correct": [2], "image": null, "type": "single"}, {"id": "_199", "question": "Une ACL est appliquée en entrée sur une interface de routeur... Si un paquet avec une adresse source de 172.18.20.55, une adresse de destination de 172.18.20.3 et un protocole de 21 est reçu sur l’interface, le paquet est-il autorisé ou refusé ?", "options": ["autorisé", "refusé"], "correct": [1], "image": null, "type": "single"}, {"id": "_200", "question": "Reportez-vous à l’illustration. La politique de l’entreprise exige que l’accès au réseau de serveurs soit limité aux seuls employés internes. Quel est le meilleur type et emplacement ACL à utiliser dans cette situation ?", "options": ["LCA étendue sortante sur R2 S0/0/1", "ACL standard sortant sur R2 S0/0/0", "ACL standard entrant sur l’interface WAN R2 se connectant à Internet", "LCA étendue entrante sur R2 S0/0/0"], "correct": [0], "image": "https://ccnareponses.com/wp-content/uploads/2022/05/i350786v1n1_C3M4-Diagram-1.jpg", "type": "single"}, {"id": "_201", "question": "Un technicien travaille sur un commutateur de couche 2 et remarque qu’un message %CDP-4-DUPLEX_MISMATCH continue d’apparaître pour le port G0/5. Quelle commande le technicien doit-il émettre sur le commutateur pour lancer le processus de dépannage ?", "options": ["afficher les voisins cdp", "show ip interface brief", "afficher l’interface g0/5", "afficher le cdp"], "correct": [2], "image": null, "type": "single"}, {"id": "_202", "question": "Quelle ressource virtuelle serait installée sur un serveur réseau pour fournir un accès direct aux ressources matérielles ?", "options": ["VMware Fusion", "une console de gestion", "un VLAN dédié", "un hyperviseur de type 1"], "correct": [3], "image": null, "type": "single"}, {"id": "_203", "question": "Reportez-vous à l’illustration... Lorsque vous suivez les bonnes pratiques, à quel endroit l’ACL standard doit-elle être appliquée ?", "options": ["R2 G0/1 entrant", "R2 S0/0/1 sortant", "R1 S0/0/0 sortant", "R2 G0/1 sortant", "R2 G0/0 sortant"], "correct": [3], "image": "https://ccnareponses.com/wp-content/uploads/2022/05/i282155v1n2_282152-1.png", "type": "single"}, {"id": "_204", "question": "Quelle base de données OSPF est identique sur tous les routeurs convergés au sein de la même zone OSPF ?", "options": ["voisin", "transfert", "état du lien", "adjacence"], "correct": [2], "image": null, "type": "single"}, {"id": "_205", "question": "Quelles sont les deux fonctionnalités à prendre en compte lors de la création d’une ACL nommée ? (Choisissez deux réponses.)", "options": ["Utilisez des caractères alphanumériques si nécessaire.", "Utilisez des caractères spéciaux, tels que ! ou * pour montrer l’importance de l’ACL.", "Modifier l’ACL à l’aide d’un éditeur de texte.", "Soyez descriptif lors de la création du nom ACL.", "Utilisez un espace pour faciliter la lecture afin de séparer le nom de la description"], "correct": [0, 3], "image": null, "type": "multiple"}, {"id": "_207", "question": "Quel type de trafic est décrit comme nécessitant au moins 384 Kbit/s de bande passante ?", "options": ["voix", "données", "vidéo"], "correct": [2], "image": null, "type": "single"}, {"id": "_208", "question": "Quelle étape du processus de routage à état des liens est décrite par un routeur insérant les meilleurs chemins dans la table de routage ?", "options": ["déclarer un voisin inaccessible", "exécuter l’algorithme SPF", "chemins d’équilibrage de charge à coût égal", "choisir le meilleur itinéraire"], "correct": [3], "image": null, "type": "single"}, {"id": "_209", "question": "Toute entreprise a décidé de réduire son empreinte environnementale en réduisant les coûts énergétiques... Quel service ou technologie répondrait à cette exigence ?", "options": ["centre de données", "virtualisation", "services cloud", "serveurs dédiés"], "correct": [2], "image": null, "type": "single"}, {"id": "_210", "question": "Quelle technique QoS lisse le débit de sortie des paquets ?", "options": ["police", "mise en forme", "détection précoce aléatoire pondérée", "Services intégrés (IntServ)", "marquage"], "correct": [1], "image": null, "type": "single"}, {"id": "_212", "question": "Un technicien réseau configure SNMPv3 et a défini un niveau de sécurité SNMPv3 authPriv. Quelle est la fonctionnalité d’utilisation de ce niveau ?", "options": ["authentifie un paquet en utilisant uniquement l’algorithme SHA", "authentifie un paquet par une correspondance de chaîne du nom d’utilisateur ou de la chaîne de communauté", "authentifie un paquet en utilisant soit la méthode HMAC avec MD5, soit la méthode SHA", "authentifie un paquet en utilisant les algorithmes HMAC MD5 ou HMAC SHA et un nom d’utilisateur"], "correct": [2], "image": null, "type": "single"}];
+
+let currentSeries = [];
+let currentIndex = 0;
+let score = 0;
+let seriesPlayed = 0;
+let totalScore = 0;
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startQuiz() {
+  currentSeries = shuffle(ALL_QUESTIONS).slice(0, 7);
+  currentIndex = 0;
+  score = 0;
+  document.getElementById('start-screen').style.display = 'none';
+  document.getElementById('results-screen').style.display = 'none';
+  document.getElementById('quiz-screen').style.display = 'block';
+  document.getElementById('current-score').textContent = '0';
+  showQuestion();
+}
+
+function showQuestion() {
+  const q = currentSeries[currentIndex];
+  document.getElementById('q-current').textContent = currentIndex + 1;
+  document.getElementById('progress-fill').style.width = ((currentIndex) / 7 * 100) + '%';
+
+  const isMulti = q.type === 'multiple';
+  const letters = 'ABCDEFGHIJKLMNOP';
+
+  let html = '<div class="question-card">';
+  html += '<span class="question-badge ' + (isMulti ? 'multiple' : '') + '">';
+  html += isMulti ? '☑ Choix multiple' : '○ Choix unique';
+  if (isMulti) html += ' (' + q.correct.length + ' réponses)';
+  html += '</span>';
+  html += '<div class="question-text">' + escapeHtml(q.question) + '</div>';
+
+  if (q.image) {
+    html += '<div class="question-image"><img src="' + q.image + '" alt="Illustration" onclick="openLightbox(this.src)" loading="lazy"></div>';
+  }
+
+  html += '<div class="options-list" id="options-list">';
+  q.options.forEach((opt, i) => {
+    html += '<div class="option-item" data-index="' + i + '" onclick="selectOption(this, ' + i + ')">';
+    html += '<div class="option-marker">' + letters[i] + '</div>';
+    html += '<div class="option-text">' + escapeHtml(opt) + '</div>';
+    html += '</div>';
+  });
+  html += '</div>';
+
+  html += '<div class="feedback" id="feedback"></div>';
+
+  html += '<div class="validate-row">';
+  html += '<button class="btn-validate validate" id="btn-validate" onclick="validateAnswer()" disabled>Valider</button>';
+  html += '<button class="btn-validate next" id="btn-next" onclick="nextQuestion()">Suivante →</button>';
+  html += '</div>';
+
+  html += '</div>';
+
+  document.getElementById('question-area').innerHTML = html;
+}
+
+let selectedOptions = new Set();
+
+function selectOption(el, idx) {
+  if (el.classList.contains('disabled')) return;
+
+  const q = currentSeries[currentIndex];
+
+  if (q.type === 'single') {
+    selectedOptions.clear();
+    document.querySelectorAll('.option-item').forEach(o => o.classList.remove('selected'));
+    selectedOptions.add(idx);
+    el.classList.add('selected');
+  } else {
+    if (selectedOptions.has(idx)) {
+      selectedOptions.delete(idx);
+      el.classList.remove('selected');
+    } else {
+      selectedOptions.add(idx);
+      el.classList.add('selected');
+    }
+  }
+
+  document.getElementById('btn-validate').disabled = selectedOptions.size === 0;
+}
+
+function validateAnswer() {
+  const q = currentSeries[currentIndex];
+  const correctSet = new Set(q.correct);
+  const selected = selectedOptions;
+
+  // Check if correct
+  const isCorrect = correctSet.size === selected.size && [...correctSet].every(c => selected.has(c));
+
+  // Disable all options
+  document.querySelectorAll('.option-item').forEach(el => {
+    el.classList.add('disabled');
+    const idx = parseInt(el.dataset.index);
+
+    if (correctSet.has(idx) && selected.has(idx)) {
+      el.classList.add('correct');
+    } else if (selected.has(idx) && !correctSet.has(idx)) {
+      el.classList.add('wrong');
+    } else if (correctSet.has(idx) && !selected.has(idx)) {
+      el.classList.add('missed-correct');
+    }
+  });
+
+  // Show feedback
+  const feedback = document.getElementById('feedback');
+  if (isCorrect) {
+    score++;
+    document.getElementById('current-score').textContent = score;
+    feedback.className = 'feedback show correct-feedback';
+    feedback.innerHTML = '✅ Bonne réponse !';
+  } else {
+    feedback.className = 'feedback show wrong-feedback';
+    feedback.innerHTML = '❌ Mauvaise réponse';
+  }
+
+  // Toggle buttons
+  document.getElementById('btn-validate').style.display = 'none';
+  document.getElementById('btn-next').style.display = 'inline-block';
+  selectedOptions = new Set();
+}
+
+function nextQuestion() {
+  currentIndex++;
+  if (currentIndex >= 7) {
+    showResults();
+  } else {
+    showQuestion();
+  }
+}
+
+function showResults() {
+  seriesPlayed++;
+  totalScore += score;
+
+  document.getElementById('quiz-screen').style.display = 'none';
+  document.getElementById('results-screen').style.display = 'block';
+  document.getElementById('final-score').textContent = score;
+  document.getElementById('progress-fill').style.width = '100%';
+
+  // Update global stats
+  document.getElementById('series-count').textContent = seriesPlayed;
+  document.getElementById('avg-score').textContent = (totalScore / seriesPlayed).toFixed(1);
+
+  const pct = Math.round(score / 7 * 100);
+  let msg, color;
+  if (score === 7) { msg = '🏆 Parfait ! Score impeccable !'; color = '#0d9488'; }
+  else if (score >= 5) { msg = '👏 Très bien ! Continue comme ça !'; color = '#60a5fa'; }
+  else if (score >= 3) { msg = '💪 Pas mal, mais tu peux mieux faire !'; color = '#f59e0b'; }
+  else { msg = '📚 Il faut réviser davantage !'; color = '#dc2626'; }
+
+  document.getElementById('score-message').textContent = msg;
+  document.getElementById('score-message').style.color = color;
+  document.getElementById('score-detail').textContent = score + '/7 — ' + pct + '% de bonnes réponses';
+  document.getElementById('score-circle').style.color = color;
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function openLightbox(src) {
+  document.getElementById('lightbox-img').src = src;
+  document.getElementById('lightbox').classList.add('active');
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('active');
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeLightbox();
+});
+</script>
+</body>
+</html>
