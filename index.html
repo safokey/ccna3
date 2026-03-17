@@ -75,6 +75,10 @@ footer { text-align: center; padding: 20px; color: #475569; font-size: 0.75rem; 
 .catalog-table th, .catalog-table td { padding: 10px; border-bottom: 1px solid #334155; vertical-align: top; }
 .catalog-table th { position: sticky; top: 0; background: #0f172a; color: #94a3b8; text-align: left; }
 .count-pill { display: inline-block; min-width: 34px; text-align: center; background: #334155; color: #e2e8f0; border-radius: 999px; padding: 2px 8px; }
+.catalog-row { cursor: pointer; }
+.catalog-row:hover { background: rgba(99,102,241,0.08); }
+.catalog-detail-option { padding: 8px 10px; border: 1px solid #334155; border-radius: 8px; margin-bottom: 8px; }
+.catalog-detail-option.right { border-color: #22c55e; background: rgba(34,197,94,0.12); }
 </style>
 </head>
 <body>
@@ -506,7 +510,8 @@ function renderCatalogRows(filterText) {
     });
 
   const body = rows.map(r => {
-    return '<tr>' +
+    const safeId = String(r.id).replace(/'/g, "\\'");
+    return '<tr class="catalog-row" onclick="renderCatalogQuestionDetail(\'' + safeId + '\')">' +
       '<td>' + r.idx + '</td>' +
       '<td>Q' + escapeHtml(r.id) + '</td>' +
       '<td>' + (r.type === 'multiple' ? 'Multiple' : 'Simple') + '</td>' +
@@ -516,6 +521,30 @@ function renderCatalogRows(filterText) {
   }).join('');
 
   document.getElementById('catalog-body').innerHTML = body || '<tr><td colspan="5">Aucune question trouvée.</td></tr>';
+}
+
+function renderCatalogQuestionDetail(questionId) {
+  const q = getQuestionById(questionId);
+  if (!q) return;
+
+  const optionsHtml = q.options.map((opt, idx) => {
+    const isRight = q.correct.includes(idx);
+    return '<div class="catalog-detail-option ' + (isRight ? 'right' : '') + '">' +
+      '<strong>' + String.fromCharCode(65 + idx) + '.</strong> ' + escapeHtml(opt) +
+      (isRight ? ' <strong>(Bonne réponse)</strong>' : '') +
+      '</div>';
+  }).join('');
+
+  const detail =
+    '<h3>Détail de la question Q' + escapeHtml(q.id) + '</h3>' +
+    '<div class="mini-note">Type: ' + (q.type === 'multiple' ? 'Choix multiples' : 'Choix simple') + '</div>' +
+    '<div style="margin:10px 0 12px 0;line-height:1.6;">' + formatQuestionText(q.question) + '</div>' +
+    (q.image ? '<div class="q-image"><img src="' + q.image + '" alt="illustration" onclick="openLightbox(this.src)" loading="lazy" /></div>' : '') +
+    '<div>' + optionsHtml + '</div>';
+
+  const panel = document.getElementById('catalog-detail');
+  panel.innerHTML = detail;
+  panel.style.display = 'block';
 }
 
 function showCatalog() {
@@ -533,6 +562,7 @@ function showCatalog() {
   html += '<div class="catalog-list"><table class="catalog-table">';
   html += '<thead><tr><th>#</th><th>ID</th><th>Type</th><th>Erreurs</th><th>Question</th></tr></thead>';
   html += '<tbody id="catalog-body"></tbody></table></div>';
+  html += '<div id="catalog-detail" class="panel" style="display:none;"></div>';
   html += '</div>';
 
   document.getElementById('catalog-screen').innerHTML = html;
