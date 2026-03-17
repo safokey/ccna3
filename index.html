@@ -101,6 +101,7 @@ footer { text-align: center; padding: 20px; color: #475569; font-size: 0.75rem; 
   <div class="sub-actions">
     <button class="btn secondary" onclick="showCatalog()">📚 Catalogue complet</button>
     <button class="btn secondary" onclick="showFavorites()">⭐ Questions favorites</button>
+    <button class="btn secondary" onclick="startWrongQuestionsQuiz()">🎯 Réviser mes erreurs</button>
     <button class="btn secondary" onclick="resetAllStats()">🧹 Réinitialiser les stats</button>
   </div>
   <p class="mini-note">Cycle: après 6 séries, une moyenne sur 42 est calculée automatiquement.</p>
@@ -129,6 +130,8 @@ let score = 0;
 let answered = false;
 let seriesResults = [];
 let repeatNeeds = {};
+let currentMode = 'normal';
+let baseQuestionTarget = SERIES_SIZE;
 
 function loadStats() {
   const defaults = { best: 0, count: 0, cycleScores: [], lastAverage42: null, wrongById: {}, favorites: [] };
@@ -175,11 +178,36 @@ function shuffle(arr) {
 }
 
 function startQuiz() {
+  currentMode = 'normal';
+  baseQuestionTarget = SERIES_SIZE;
   currentSeries = shuffle(ALL_QUESTIONS).slice(0, SERIES_SIZE);
   currentIndex = 0;
   score = 0;
   seriesResults = [];
   repeatNeeds = {};
+  document.getElementById('start-screen').style.display = 'none';
+  document.getElementById('score-screen').style.display = 'none';
+  document.getElementById('catalog-screen').style.display = 'none';
+  document.getElementById('favorites-screen').style.display = 'none';
+  document.getElementById('quiz-screen').style.display = 'block';
+  showQuestion();
+}
+
+function startWrongQuestionsQuiz() {
+  const wrongQuestions = ALL_QUESTIONS.filter(q => (stats.wrongById[q.id] || 0) > 0);
+  if (wrongQuestions.length === 0) {
+    alert('Aucune question en erreur pour le moment.');
+    return;
+  }
+
+  currentMode = 'errors';
+  baseQuestionTarget = wrongQuestions.length;
+  currentSeries = shuffle(wrongQuestions);
+  currentIndex = 0;
+  score = 0;
+  seriesResults = [];
+  repeatNeeds = {};
+
   document.getElementById('start-screen').style.display = 'none';
   document.getElementById('score-screen').style.display = 'none';
   document.getElementById('catalog-screen').style.display = 'none';
@@ -219,7 +247,7 @@ function toggleFavoriteCurrentQuestion(event) {
 }
 
 function isReviewPhase() {
-  return currentIndex >= SERIES_SIZE;
+  return currentIndex >= baseQuestionTarget;
 }
 
 function countPendingRevisions() {
@@ -290,7 +318,7 @@ function formatQuestionText(text) {
 function showQuestion() {
   answered = false;
   const q = currentSeries[currentIndex];
-  const pct = (Math.min(currentIndex, SERIES_SIZE) / SERIES_SIZE) * 100;
+  const pct = (Math.min(currentIndex, baseQuestionTarget) / baseQuestionTarget) * 100;
   document.getElementById('progress-bar').style.width = pct + '%';
   document.getElementById('nav-btns').style.display = 'none';
   
@@ -301,7 +329,7 @@ function showQuestion() {
   let html = '<div class="question-card">';
   html += '<div class="q-header"><span class="q-number">';
   if (!inReview) {
-    html += 'Question ' + (currentIndex + 1) + '/' + SERIES_SIZE + ' (Q' + q.id + ')';
+    html += 'Question ' + (currentIndex + 1) + '/' + baseQuestionTarget + ' (Q' + q.id + ')';
   } else {
     html += 'Révision ciblée (Q' + q.id + ')';
   }
@@ -451,44 +479,48 @@ function nextQuestion() {
 
 function showScore() {
   document.getElementById('quiz-screen').style.display = 'none';
-  stats.count++;
-
-  if (score > stats.best) stats.best = score;
-
-  stats.cycleScores.push(score);
   let cycleAverage42 = null;
-  if (stats.cycleScores.length === 6) {
-    cycleAverage42 = stats.cycleScores.reduce((sum, n) => sum + n, 0);
-    stats.lastAverage42 = cycleAverage42;
-    stats.cycleScores = [];
+
+  if (currentMode === 'normal') {
+    stats.count++;
+    if (score > stats.best) stats.best = score;
+    stats.cycleScores.push(score);
+    if (stats.cycleScores.length === 6) {
+      cycleAverage42 = stats.cycleScores.reduce((sum, n) => sum + n, 0);
+      stats.lastAverage42 = cycleAverage42;
+      stats.cycleScores = [];
+    }
   }
 
   saveStats();
   refreshHeaderStats();
   
   let emoji = score >= 6 ? '🏆' : score >= 4 ? '👍' : '📚';
-  let msg = score === SERIES_SIZE ? 'Parfait !' : score >= 5 ? 'Bien joué !' : score >= 3 ? 'Pas mal, continue !' : 'Révise encore !';
+  let msg = score === baseQuestionTarget ? 'Parfait !' : score >= Math.ceil(baseQuestionTarget * 0.7) ? 'Bien joué !' : score >= Math.ceil(baseQuestionTarget * 0.4) ? 'Pas mal, continue !' : 'Révise encore !';
   const baseMistakes = seriesResults.filter(r => r.phase === 'base' && !r.correct).length;
   const reviewAttempts = seriesResults.filter(r => r.phase === 'review').length;
   
   let html = '<div class="score-screen">';
   html += '<h2 style="font-size:1.3rem;color:#e2e8f0;">Résultat</h2>';
-  html += '<div class="score-circle"><div class="score-big">' + score + '/' + SERIES_SIZE + '</div><div class="score-label">' + emoji + ' ' + msg + '</div></div>';
+  html += '<div class="score-circle"><div class="score-big">' + score + '/' + baseQuestionTarget + '</div><div class="score-label">' + emoji + ' ' + msg + '</div></div>';
   html += '<div class="panel"><h3>Synthèse de série</h3>';
   html += '<div>Erreurs en série principale: <strong>' + baseMistakes + '</strong></div>';
   html += '<div>Questions de révision rejouées: <strong>' + reviewAttempts + '</strong></div>';
   html += '<div>Maîtrise des erreurs: <strong>OK</strong></div>';
   html += '</div>';
 
-  if (cycleAverage42 !== null) {
+  if (currentMode === 'normal' && cycleAverage42 !== null) {
     const pct = ((cycleAverage42 / 42) * 100).toFixed(1);
     html += '<div class="panel"><h3>Moyenne sur 6 séries</h3>';
     html += '<div><strong>' + cycleAverage42 + '/42</strong> (' + pct + '%)</div>';
     html += '<div class="mini-note">Le cycle repart à 0 pour les 6 prochaines séries.</div></div>';
-  } else if (typeof stats.lastAverage42 === 'number') {
+  } else if (currentMode === 'normal' && typeof stats.lastAverage42 === 'number') {
     const pct = ((stats.lastAverage42 / 42) * 100).toFixed(1);
     html += '<div class="panel"><h3>Dernière moyenne (6 séries)</h3>';
     html += '<div><strong>' + stats.lastAverage42 + '/42</strong> (' + pct + '%)</div></div>';
+  } else if (currentMode === 'errors') {
+    html += '<div class="panel"><h3>Mode Révision des Erreurs</h3>';
+    html += '<div>Cette session n\'impacte pas la moyenne du cycle 6 séries.</div></div>';
   }
 
   html += '<div style="margin-bottom:20px;">';
