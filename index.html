@@ -79,6 +79,8 @@ footer { text-align: center; padding: 20px; color: #475569; font-size: 0.75rem; 
 .catalog-row:hover { background: rgba(99,102,241,0.08); }
 .catalog-detail-option { padding: 8px 10px; border: 1px solid #334155; border-radius: 8px; margin-bottom: 8px; }
 .catalog-detail-option.right { border-color: #22c55e; background: rgba(34,197,94,0.12); }
+.fav-btn { background: #334155; color: #e2e8f0; border: 1px solid #475569; border-radius: 8px; padding: 6px 10px; cursor: pointer; font-size: 0.8rem; }
+.fav-btn.active { background: #f59e0b22; border-color: #f59e0b; color: #fbbf24; }
 </style>
 </head>
 <body>
@@ -90,6 +92,7 @@ footer { text-align: center; padding: 20px; color: #475569; font-size: 0.75rem; 
   <div class="stat-box"><div class="num" id="series-count">0</div><div class="label">Séries jouées</div></div>
   <div class="stat-box"><div class="num" id="cycle-progress">0/6</div><div class="label">Cycle 6 séries</div></div>
   <div class="stat-box"><div class="num" id="avg-42">-%</div><div class="label">Moyenne (6 séries)</div></div>
+  <div class="stat-box"><div class="num" id="fav-count">0</div><div class="label">Favoris</div></div>
   <div class="stat-box"><div class="num" id="total-errors">0</div><div class="label">Erreurs cumulées</div></div>
 </div>
 <div id="start-screen">
@@ -97,6 +100,7 @@ footer { text-align: center; padding: 20px; color: #475569; font-size: 0.75rem; 
   <button class="btn" onclick="startQuiz()">▶ Commencer une série</button>
   <div class="sub-actions">
     <button class="btn secondary" onclick="showCatalog()">📚 Catalogue complet</button>
+    <button class="btn secondary" onclick="showFavorites()">⭐ Questions favorites</button>
     <button class="btn secondary" onclick="resetAllStats()">🧹 Réinitialiser les stats</button>
   </div>
   <p class="mini-note">Cycle: après 6 séries, une moyenne sur 42 est calculée automatiquement.</p>
@@ -110,6 +114,7 @@ footer { text-align: center; padding: 20px; color: #475569; font-size: 0.75rem; 
 </div>
 <div id="score-screen" style="display:none;"></div>
 <div id="catalog-screen" style="display:none;"></div>
+<div id="favorites-screen" style="display:none;"></div>
 </div>
 <div class="lightbox" id="lightbox" onclick="this.classList.remove('active')"><img id="lightbox-img" /></div>
 <footer>CCNA3 ENSA v7 — 218 questions — Source: ccnareponses.com</footer>
@@ -126,7 +131,7 @@ let seriesResults = [];
 let repeatNeeds = {};
 
 function loadStats() {
-  const defaults = { best: 0, count: 0, cycleScores: [], lastAverage42: null, wrongById: {} };
+  const defaults = { best: 0, count: 0, cycleScores: [], lastAverage42: null, wrongById: {}, favorites: [] };
   try {
     const parsed = JSON.parse(localStorage.getItem('ccna3_stats') || '{}');
     return {
@@ -134,7 +139,8 @@ function loadStats() {
       count: typeof parsed.count === 'number' ? parsed.count : defaults.count,
       cycleScores: Array.isArray(parsed.cycleScores) ? parsed.cycleScores : defaults.cycleScores,
       lastAverage42: typeof parsed.lastAverage42 === 'number' ? parsed.lastAverage42 : defaults.lastAverage42,
-      wrongById: parsed.wrongById && typeof parsed.wrongById === 'object' ? parsed.wrongById : defaults.wrongById
+      wrongById: parsed.wrongById && typeof parsed.wrongById === 'object' ? parsed.wrongById : defaults.wrongById,
+      favorites: Array.isArray(parsed.favorites) ? parsed.favorites : defaults.favorites
     };
   } catch (_) {
     return defaults;
@@ -155,6 +161,7 @@ function refreshHeaderStats() {
   document.getElementById('series-count').textContent = stats.count;
   document.getElementById('cycle-progress').textContent = (stats.cycleScores.length || 0) + '/6';
   document.getElementById('avg-42').textContent = typeof stats.lastAverage42 === 'number' ? (((stats.lastAverage42 / 42) * 100).toFixed(1) + '%') : '-%';
+  document.getElementById('fav-count').textContent = String(stats.favorites.length || 0);
   document.getElementById('total-errors').textContent = String(getTotalErrors());
 }
 
@@ -176,8 +183,39 @@ function startQuiz() {
   document.getElementById('start-screen').style.display = 'none';
   document.getElementById('score-screen').style.display = 'none';
   document.getElementById('catalog-screen').style.display = 'none';
+  document.getElementById('favorites-screen').style.display = 'none';
   document.getElementById('quiz-screen').style.display = 'block';
   showQuestion();
+}
+
+function isFavorite(questionId) {
+  return stats.favorites.includes(questionId);
+}
+
+function toggleFavoriteById(questionId) {
+  if (isFavorite(questionId)) {
+    stats.favorites = stats.favorites.filter(id => id !== questionId);
+  } else {
+    stats.favorites.push(questionId);
+  }
+  saveStats();
+  refreshHeaderStats();
+}
+
+function updateFavoriteUi(questionId) {
+  const btn = document.getElementById('fav-toggle-btn');
+  if (!btn) return;
+  const favorite = isFavorite(questionId);
+  btn.classList.toggle('active', favorite);
+  btn.textContent = favorite ? '★ Retirer des favoris' : '☆ Ajouter aux favoris';
+}
+
+function toggleFavoriteCurrentQuestion(event) {
+  if (event) event.preventDefault();
+  const q = currentSeries[currentIndex];
+  if (!q) return;
+  toggleFavoriteById(q.id);
+  updateFavoriteUi(q.id);
 }
 
 function isReviewPhase() {
@@ -268,6 +306,7 @@ function showQuestion() {
     html += 'Révision ciblée (Q' + q.id + ')';
   }
   html += '</span>';
+  html += '<button id="fav-toggle-btn" class="fav-btn" onclick="toggleFavoriteCurrentQuestion(event)">☆ Ajouter aux favoris</button>';
   if (isMulti) html += '<span class="q-type">Choix multiples (' + q.correct.length + ' réponses)</span>';
   if (inReview) html += '<span class="badge review">À maîtriser: ' + countPendingRevisions() + '</span>';
   html += '</div>';
@@ -299,6 +338,7 @@ function showQuestion() {
   html += '</div>';
   
   document.getElementById('question-container').innerHTML = html;
+  updateFavoriteUi(q.id);
 }
 
 function selectOption(idx, type) {
@@ -479,6 +519,7 @@ function showScore() {
 
 function showMenu() {
   document.getElementById('catalog-screen').style.display = 'none';
+  document.getElementById('favorites-screen').style.display = 'none';
   document.getElementById('score-screen').style.display = 'none';
   document.getElementById('quiz-screen').style.display = 'none';
   document.getElementById('start-screen').style.display = 'block';
@@ -547,6 +588,82 @@ function renderCatalogQuestionDetail(questionId) {
   panel.style.display = 'block';
 }
 
+function renderFavoritesRows(filterText) {
+  const needle = (filterText || '').trim().toLowerCase();
+  const rows = stats.favorites
+    .map(id => getQuestionById(id))
+    .filter(Boolean)
+    .map((q, idx) => ({
+      idx: idx + 1,
+      id: q.id,
+      type: q.type,
+      text: q.question,
+      wrong: stats.wrongById[q.id] || 0
+    }))
+    .filter(item => !needle || item.text.toLowerCase().includes(needle) || String(item.id).toLowerCase().includes(needle));
+
+  const body = rows.map(r => {
+    const safeId = String(r.id).replace(/'/g, "\\'");
+    return '<tr class="catalog-row" onclick="renderFavoritesQuestionDetail(\'' + safeId + '\')">' +
+      '<td>' + r.idx + '</td>' +
+      '<td>Q' + escapeHtml(r.id) + '</td>' +
+      '<td>' + (r.type === 'multiple' ? 'Multiple' : 'Simple') + '</td>' +
+      '<td><span class="count-pill">' + r.wrong + '</span></td>' +
+      '<td>' + escapeHtml(r.text.substring(0, 180)) + (r.text.length > 180 ? '...' : '') + '</td>' +
+      '</tr>';
+  }).join('');
+
+  document.getElementById('favorites-body').innerHTML = body || '<tr><td colspan="5">Aucune question en favoris.</td></tr>';
+}
+
+function renderFavoritesQuestionDetail(questionId) {
+  const q = getQuestionById(questionId);
+  if (!q) return;
+
+  const optionsHtml = q.options.map((opt, idx) => {
+    const isRight = q.correct.includes(idx);
+    return '<div class="catalog-detail-option ' + (isRight ? 'right' : '') + '">' +
+      '<strong>' + String.fromCharCode(65 + idx) + '.</strong> ' + escapeHtml(opt) +
+      (isRight ? ' <strong>(Bonne réponse)</strong>' : '') +
+      '</div>';
+  }).join('');
+
+  const detail =
+    '<h3>Détail de la question Q' + escapeHtml(q.id) + '</h3>' +
+    '<div class="mini-note">Type: ' + (q.type === 'multiple' ? 'Choix multiples' : 'Choix simple') + '</div>' +
+    '<div style="margin:10px 0 12px 0;line-height:1.6;">' + formatQuestionText(q.question) + '</div>' +
+    (q.image ? '<div class="q-image"><img src="' + q.image + '" alt="illustration" onclick="openLightbox(this.src)" loading="lazy" /></div>' : '') +
+    '<div>' + optionsHtml + '</div>';
+
+  const panel = document.getElementById('favorites-detail');
+  panel.innerHTML = detail;
+  panel.style.display = 'block';
+}
+
+function showFavorites() {
+  document.getElementById('start-screen').style.display = 'none';
+  document.getElementById('quiz-screen').style.display = 'none';
+  document.getElementById('score-screen').style.display = 'none';
+  document.getElementById('catalog-screen').style.display = 'none';
+
+  let html = '<div class="score-screen catalog-wrap">';
+  html += '<h2 style="font-size:1.2rem;color:#e2e8f0;">Questions favorites</h2>';
+  html += '<div class="mini-note">Cliquez sur une question favorite pour voir les réponses et la bonne réponse.</div>';
+  html += '<div class="catalog-tools">';
+  html += '<input id="favorites-search" type="text" placeholder="Filtrer par ID ou texte de question..." oninput="renderFavoritesRows(this.value)" />';
+  html += '<button class="btn secondary" onclick="showMenu()">🏠 Retour menu</button>';
+  html += '</div>';
+  html += '<div class="catalog-list"><table class="catalog-table">';
+  html += '<thead><tr><th>#</th><th>ID</th><th>Type</th><th>Erreurs</th><th>Question</th></tr></thead>';
+  html += '<tbody id="favorites-body"></tbody></table></div>';
+  html += '<div id="favorites-detail" class="panel" style="display:none;"></div>';
+  html += '</div>';
+
+  document.getElementById('favorites-screen').innerHTML = html;
+  document.getElementById('favorites-screen').style.display = 'block';
+  renderFavoritesRows('');
+}
+
 function showCatalog() {
   document.getElementById('start-screen').style.display = 'none';
   document.getElementById('quiz-screen').style.display = 'none';
@@ -572,7 +689,7 @@ function showCatalog() {
 
 function resetAllStats() {
   if (!confirm('Réinitialiser toutes les statistiques (scores, erreurs, moyenne 6 séries) ?')) return;
-  stats = { best: 0, count: 0, cycleScores: [], lastAverage42: null, wrongById: {} };
+  stats = { best: 0, count: 0, cycleScores: [], lastAverage42: null, wrongById: {}, favorites: [] };
   saveStats();
   refreshHeaderStats();
 }
